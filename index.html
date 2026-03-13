@@ -176,15 +176,16 @@
 <script>
 const substantivDb = [
     {ord: "agurk", symbol: "🥒"}, {ord: "and", symbol: "🦆"}, {ord: "anker", symbol: "⚓"},
-    {ord: "ape", symbol: "🐒"}, {ord: "appelsin", symbol: "🍊"}, {ord: "arm", symbol: "💪"}, {ord: "avis", symbol: "📰"}, {ord: "bad", symbol: "🛀"},
-    {ord: "ball", symbol: "⚽"}, {ord: "bamse", symbol: "🧸"}, {ord: "banan", symbol: "🍌"}, {ord: "belte", symbol: "🥋"},
+    {ord: "ape", symbol: "🐒"}, {ord: "appelsin", symbol: "🍊"}, {ord: "arm", symbol: "💪"}, {ord: "avis", symbol: "📰"}, 
+
+{ord: "bad", symbol: "🛀"}, {ord: "ball", symbol: "⚽"}, {ord: "bamse", symbol: "🧸"}, {ord: "banan", symbol: "🍌"}, {ord: "belte", symbol: "🥋"},
     {ord: "bie", symbol: "🐝"}, {ord: "bil", symbol: "🚗"}, {ord: "bille", symbol: "🐞"}, {ord: "bjelle", symbol: "🔔"}, {ord: "bjørn", symbol: "🐻"},
     {ord: "blad", symbol: "🍃"}, {ord: "blomst", symbol: "🌻"}, {ord: "bløtkake", symbol: "🎂"}, {ord: "bok", symbol: "📖"},
     {ord: "borg", symbol: "🏰"}, {ord: "brev", symbol: "✉️"}, {ord: "brille", symbol: "👓"}, {ord: "bro", symbol: "🌉"}, {ord: "brokkoli", symbol: "🥦"},
     {ord: "brus", symbol: "🥤"}, {ord: "brød", symbol: "🍞"}, {ord: "bue", symbol: "🏹"}, {ord: "buss", symbol: "🚌"}, {ord: "by", symbol: "🏙️"},
-    {ord: "bål", symbol: "🔥"}, {ord: "båt", symbol: "⛵"}, {ord: "bær", symbol: "🍓"}, {ord: "dinosaur", symbol: "🦖"},
-    {ord: "do", symbol: "🚽"}, {ord: "drage", symbol: "🐉"}, {ord: "due", symbol: "🕊️"}, {ord: "dusj", symbol: "🚿"}, {ord: "spor", symbol: "🐾"},
-    {ord: "dør", symbol: "🚪"}, {ord: "egg", symbol: "🥚"}, {ord: "ekorn", symbol: "🐿️"}, {ord: "elefant", symbol: "🐘"}, {ord: "engel", symbol: "😇"},
+    {ord: "bål", symbol: "🔥"}, {ord: "båt", symbol: "⛵"}, {ord: "bær", symbol: "🍓"}, 
+{ord: "dinosaur", symbol: "🦖"}, {ord: "do", symbol: "🚽"}, {ord: "drage", symbol: "🐉"}, {ord: "due", symbol: "🕊️"}, {ord: "dusj", symbol: "🚿"}, 
+    {ord: "dør", symbol: "🚪"}, {ord: "egg", symbol: "🥚"}, {ord: "ekorn", symbol: "🐿️"}, {ord: "elefant", symbol: "🐘"}, {ord: "elg", symbol: "🫎"}, {ord: "engel", symbol: "😇"},
     {ord: "eple", symbol: "🍎"}, {ord: "fisk", symbol: "🐟"}, {ord: "fjell", symbol: "🏔️"}, {ord: "flagg", symbol: "🚩"},
     {ord: "flaske", symbol: "🍼"}, {ord: "fly", symbol: "✈️"}, {ord: "fot", symbol: "🦶"}, {ord: "frosk", symbol: "🐸"}, {ord: "fugl", symbol: "🐦"},
     {ord: "gaffel", symbol: "🍴"}, {ord: "garn", symbol: "🧶"}, {ord: "gave", symbol: "🎁"}, {ord: "geit", symbol: "🐐"}, {ord: "giraff", symbol: "🦒"},
@@ -198,13 +199,13 @@ const substantivDb = [
     {ord: "krabbe", symbol: "🦀"}, {ord: "kran", symbol: "🏗️"}, {ord: "krok", symbol: "🪝"}, {ord: "krone", symbol: "👑"}, {ord: "ku", symbol: "🐄"},
     {ord: "lam", symbol: "LOCAL_LAM"}, {ord: "lampe", symbol: "💡"}, {ord: "le", symbol: "😂"}, {ord: "lue", symbol: "🧢"},
     {ord: "lus", symbol: "🪳"}, {ord: "løve", symbol: "🦁"}, {ord: "mat", symbol: "🍱"}, {ord: "maursluker", symbol: "🐜"}, {ord: "melk", symbol: "🥛"},
-    {ord: "munn", symbol: "👄"}, {ord: "mus", symbol: "🐭"}, {ord: "musikk", symbol: "🎵"}, {ord: "måne", symbol: "🌙"}, {ord: "natt", symbol: "🌃"},
+    {ord: "munn", symbol: "👄"}, {ord: "mur", symbol: "🧱"}, {ord: "mus", symbol: "🐭"}, {ord: "musikk", symbol: "🎵"}, {ord: "måne", symbol: "🌙"}, {ord: "natt", symbol: "🌃"},
     {ord: "nese", symbol: "👃"}, {ord: "nål", symbol: "🪡"}, {ord: "nøkkel", symbol: "🔑"}, {ord: "orm", symbol: "🐍"}, {ord: "ost", symbol: "🧀"},
     {ord: "pakke", symbol: "📦"}, {ord: "paraply", symbol: "☂️"}, {ord: "penger", symbol: "💰"}, {ord: "pil", symbol: "🏹"}, {ord: "pizza", symbol: "🍕"},
     {ord: "pære", symbol: "🍐"}, {ord: "radio", symbol: "📻"}, {ord: "regn", symbol: "🌧️"}, {ord: "rev", symbol: "🦊"},
-    {ord: "ri", symbol: "🏇"}, {ord: "ro", symbol: "🚣"}, {ord: "robot", symbol: "🤖"}, {ord: "rulleskøyter", symbol: "🛼"}, {ord: "sag", symbol: "🪚"},
-    {ord: "saks", symbol: "✂️"}, {ord: "sekk", symbol: "🎒"}, {ord: "seng", symbol: "🛌"}, {ord: "ski", symbol: "🎿"}, {ord: "skje", symbol: "🥄"},
-    {ord: "skjorte", symbol: "👕"}, {ord: "sko", symbol: "👟"}, {ord: "skole", symbol: "🏫"}, {ord: "sky", symbol: "☁️"}, {ord: "slange", symbol: "🐍"},
+    {ord: "ri", symbol: "🏇"}, {ord: "ro", symbol: "🚣"}, {ord: "robot", symbol: "🤖"}, {ord: "rose", symbol: "LOCAL_ROSE"}, {ord: "rulleskøyter", symbol: "🛼"}, {ord: "sag", symbol: "🪚"},
+    {ord: "saks", symbol: "✂️"}, {ord: "sekk", symbol: "🎒"}, {ord: "seng", symbol: "🛌"}, {ord: "sil", symbol: "LOCAL_SIL"}, {ord: "ski", symbol: "🎿"}, {ord: "skje", symbol: "🥄"},
+    {ord: "skjorte", symbol: "👕"}, {ord: "sko", symbol: "👟"}, {ord: "skole", symbol: "🏫"}, {ord: "sky", symbol: "☁️"}, {ord: "slange", symbol: "🐍"}, {ord: "spor", symbol: "🐾"},
     {ord: "slott", symbol: "🏰"}, {ord: "snø", symbol: "❄️"}, {ord: "snømann", symbol: "☃️"}, {ord: "sol", symbol: "☀️"}, {ord: "sopp", symbol: "🍄"},
     {ord: "stein", symbol: "🪨"}, {ord: "stjerne", symbol: "⭐"}, {ord: "stol", symbol: "🪑"}, {ord: "sykkel", symbol: "🚲"},
     {ord: "såpe", symbol: "🧼"}, {ord: "tann", symbol: "🦷"}, {ord: "telt", symbol: "⛺"}, {ord: "tog", symbol: "🚆"},
@@ -241,14 +242,22 @@ function createWordHtml(item, isFasit) {
     const word = item.ord;
     let imgUrl;
 
-    // Sjekker om ordet er "lam" for å bruke ditt eget bilde
+    // Sjekker etter dine egne bildefiler
     if (item.symbol === "LOCAL_LAM") {
-        imgUrl = "lam.png"; // Her skriver du filnavnet på bildet ditt
+        imgUrl = "lam.png";
+
+    } else if (item.symbol === "LOCAL_SIL") {
+        imgUrl = "sil.png";
+
+    } else if (item.symbol === "LOCAL_ROSE") {
+        imgUrl = "rose.png";
+
     } else {
-        // Standard Twemoji-logikk for alle andre ord
+        // Standard Twemoji-logikk for alle andre ord (emojier)
         const charCode = Array.from(item.symbol).map(c => c.codePointAt(0).toString(16)).filter(code => code !== "fe0f").join('-');
         imgUrl = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${charCode}.svg`;
     }
+
 
     return `<div class="word-unit">
             <div class="image-box"><img src="${imgUrl}" alt="${word}" onerror="this.src='https://via.placeholder.com/75?text=?'"></div>
