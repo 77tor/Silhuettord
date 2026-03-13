@@ -1,0 +1,278 @@
+<!DOCTYPE html>
+<html lang="no">
+<head>
+    <meta charset="UTF-8">
+    <title>Silhuett-ord Generator (V2.2)</title>
+    <link rel="icon" type="image/png" href="silhuett-ord_02.png">
+    <link rel="apple-touch-icon" href="silhuett-ord_02.png">
+    <style>
+        @font-face {
+            font-family: 'Trykkskrift-1';
+            src: url('Trykkskrift-1.otf') format('opentype'),
+                 url('Trykkskrift-1.ttf') format('truetype');
+            font-weight: normal; font-style: normal;
+        }
+
+        :root { 
+            --unit-size: 45px;   
+            --tall-size: 72px;  
+            --mid-size: 58px;   
+            --primary: #2c3e50; 
+        }
+
+        body { font-family: sans-serif; display: flex; margin: 0; background: #f0f2f5; }
+        
+        #sidebar { 
+            width: 350px; 
+            padding: 25px; 
+            background: var(--primary); 
+            color: white; 
+            height: 100vh; 
+            overflow-y: auto; 
+            position: fixed; 
+            box-sizing: border-box; 
+            z-index: 100; 
+            display: flex;
+            flex-direction: column;
+            text-align: center;
+        }
+
+        .sidebar-logo { width: 100%; max-width: 200px; height: auto; margin: 0 auto 20px auto; border-radius: 8px; }
+        
+        .sidebar-content { flex: 1; text-align: left; }
+
+        #sidebar h2 { font-size: 1.2rem; border-bottom: 2px solid #34495e; padding-bottom: 10px; margin-top: 0; }
+        .group { margin-bottom: 20px; }
+        label { display: block; font-size: 0.9rem; margin-bottom: 8px; color: #bdc3c7; }
+        select, input, button { width: 100%; padding: 10px; border-radius: 4px; border: none; margin-bottom: 10px; box-sizing: border-box; }
+        button { cursor: pointer; font-weight: bold; background: #3498db; color: white; transition: background 0.2s; }
+        button:hover { background: #2980b9; }
+        .btn-print { background: #27ae60; }
+        .btn-print:hover { background: #219150; }
+
+        .sidebar-footer {
+            margin-top: 20px;
+            padding-top: 15px;
+            border-top: 1px solid #34495e;
+            font-size: 0.8rem;
+            color: #bdc3c7;
+            text-align: center;
+        }
+
+        #preview { margin-left: 350px; padding: 20px; width: calc(100% - 350px); display: flex; flex-direction: column; align-items: center; }
+        .paper { background: white; width: 210mm; min-height: 290mm; padding: 10mm 15mm 15mm 15mm; box-shadow: 0 0 20px rgba(0,0,0,0.1); margin-bottom: 30px; box-sizing: border-box; overflow: hidden; position: relative; }
+        
+        .paper-header {
+            display: flex;
+            justify-content: space-between;
+            align-items: center;
+            width: 100%;
+            margin-bottom: 15px;
+            border-bottom: 2px solid #eee;
+            padding-bottom: 8px;
+        }
+
+        .paper h1 { margin: 0; font-size: 1.8rem; text-align: left; flex: 1; }
+
+        .info-box { 
+            width: 340px; 
+            background: #fff; 
+            border: 1px solid #ccc; 
+            padding: 6px 10px; 
+            font-size: 0.75rem; 
+            line-height: 1.2;
+            border-radius: 4px;
+        }
+        .info-box strong { display: block; margin-bottom: 2px; color: #333; text-transform: uppercase; }
+
+        .grid-container { display: grid; grid-template-columns: repeat(2, 1fr); gap: 20px 40px; width: 100%; }
+        .word-unit { display: flex; flex-direction: column; min-height: 230px; page-break-inside: avoid; align-items: center; }
+        
+        .image-box { width: 80px; height: 80px; margin-bottom: 5px; display: flex; justify-content: center; align-items: center; }
+        .image-box img { width: 70px; height: 70px; object-fit: contain; }
+
+        .shapes-container { height: 85px; display: flex; align-items: flex-end; position: relative; width: 100%; justify-content: center; }
+        .shapes { display: flex; align-items: flex-end; flex-wrap: nowrap; } 
+        
+        .box { font-family: 'Trykkskrift-1', sans-serif; font-size: 38px; border: 2px solid #000; margin-left: -2px; background: #fff; box-sizing: border-box; position: relative; z-index: 2; display: flex; justify-content: center; width: var(--unit-size); }
+        .w-v-narrow { width: 22px; } .w-narrow { width: 32px; } .w-normal { width: var(--unit-size); } 
+
+        .special-box { border: none; background: transparent; }
+        .special-box svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: -1; }
+
+        .neutral { height: var(--unit-size); }
+        .ascender { height: var(--tall-size); } 
+        .medium-high { height: var(--mid-size); }
+        .descender { height: var(--tall-size); margin-bottom: calc((var(--tall-size) - var(--unit-size)) * -1); }
+        
+        .box span { position: absolute; bottom: 3px; line-height: 1; }
+        .box-p-taper span { bottom: 30px; }
+        .descender:not(.box-p-taper) span { bottom: 28px; }
+
+        .lines { margin-top: 8px; width: 100%; position: relative; }
+        .l { border-bottom: 1px solid #ccc; height: 24px; }
+        .l.thick { border-bottom: 4px solid #000; }
+
+        @media print {
+            @page { size: A4; margin: 0; }
+            #sidebar { display: none !important; }
+            #preview { margin: 0 !important; padding: 0 !important; width: 100% !important; }
+            .paper { box-shadow: none !important; margin: 0 !important; border: none !important; width: 210mm !important; height: 297mm !important; }
+            #fasitPaper { display: block !important; page-break-before: always !important; }
+        }
+        .hidden { display: none; }
+    </style>
+</head>
+<body>
+
+<div id="sidebar">
+    <img src="silhuett-ord_03.png" alt="Silhuett-ord logo" class="sidebar-logo">
+    
+    <div class="sidebar-content">
+        <h2>Innstillinger</h2>
+        <div class="group">
+            <label>Bokstavantall:</label>
+            <select id="chars">
+                <option value="2,3,4,5">2 til 5 bokstaver</option>
+                <option value="2">2 bokstaver</option>
+                <option value="3">3 bokstaver</option>
+                <option value="4">4 bokstaver</option>
+                <option value="5">5 bokstaver</option>
+            </select>
+        </div>
+        <div class="group">
+            <label>Antall ord (maks 6):</label>
+            <input type="number" id="count" value="6" min="1" max="6">
+        </div>
+        <button onclick="run()">GENERERE OPPGAVER</button>
+        <button class="btn-print" onclick="window.print()">SKRIV UT</button>
+        <button style="background:#555;" onclick="toggleFasit()">VIS/SKJUL FASIT</button>
+    </div>
+
+    <div class="sidebar-footer">
+        Utviklet av Tor Skarprud<br>
+        &copy; 2026 Silhuett-ord
+    </div>
+</div>
+
+<div id="preview">
+    <div class="paper" id="mainPaper">
+        <div class="paper-header">
+            <h1>Silhuett-ord</h1>
+            <div class="info-box">
+                <strong>Oppgave</strong>
+                1. Skriv ordene som passer til bildene i silhuettene.<br>
+                2. Skriv ordene minst en gang på linjesystemet under.
+            </div>
+        </div>
+        <div id="output" class="grid-container"></div>
+    </div>
+    <div class="paper hidden" id="fasitPaper">
+        <h1>Fasit</h1>
+        <div id="fasitOutput" class="grid-container"></div>
+    </div>
+</div>
+
+<script>
+const substantivDb = [
+    {ord: "agurk", symbol: "🥒"}, {ord: "and", symbol: "🦆"}, {ord: "anker", symbol: "⚓"},
+    {ord: "ape", symbol: "🐒"}, {ord: "appelsin", symbol: "🍊"}, {ord: "arm", symbol: "💪"}, {ord: "avis", symbol: "📰"}, {ord: "bad", symbol: "🛀"},
+    {ord: "ball", symbol: "⚽"}, {ord: "bamse", symbol: "🧸"}, {ord: "banan", symbol: "🍌"}, {ord: "belte", symbol: "🥋"},
+    {ord: "bie", symbol: "🐝"}, {ord: "bil", symbol: "🚗"}, {ord: "bille", symbol: "🐞"}, {ord: "bjelle", symbol: "🔔"}, {ord: "bjørn", symbol: "🐻"},
+    {ord: "blad", symbol: "🍃"}, {ord: "blomst", symbol: "🌻"}, {ord: "bløtkake", symbol: "🎂"}, {ord: "bok", symbol: "📖"},
+    {ord: "borg", symbol: "🏰"}, {ord: "brev", symbol: "✉️"}, {ord: "brille", symbol: "👓"}, {ord: "bro", symbol: "🌉"}, {ord: "brokkoli", symbol: "🥦"},
+    {ord: "brus", symbol: "🥤"}, {ord: "brød", symbol: "🍞"}, {ord: "bue", symbol: "🏹"}, {ord: "buss", symbol: "🚌"}, {ord: "by", symbol: "🏙️"},
+    {ord: "bål", symbol: "🔥"}, {ord: "båt", symbol: "⛵"}, {ord: "bær", symbol: "🍓"}, {ord: "dinosaur", symbol: "🦖"},
+    {ord: "do", symbol: "🚽"}, {ord: "drage", symbol: "🐉"}, {ord: "due", symbol: "🕊️"}, {ord: "dusj", symbol: "🚿"}, {ord: "spor", symbol: "🐾"},
+    {ord: "dør", symbol: "🚪"}, {ord: "egg", symbol: "🥚"}, {ord: "ekorn", symbol: "🐿️"}, {ord: "elefant", symbol: "🐘"}, {ord: "engel", symbol: "😇"},
+    {ord: "eple", symbol: "🍎"}, {ord: "fisk", symbol: "🐟"}, {ord: "fjell", symbol: "🏔️"}, {ord: "flagg", symbol: "🚩"},
+    {ord: "flaske", symbol: "🍼"}, {ord: "fly", symbol: "✈️"}, {ord: "fot", symbol: "🦶"}, {ord: "frosk", symbol: "🐸"}, {ord: "fugl", symbol: "🐦"},
+    {ord: "gaffel", symbol: "🍴"}, {ord: "garn", symbol: "🧶"}, {ord: "gave", symbol: "🎁"}, {ord: "geit", symbol: "🐐"}, {ord: "giraff", symbol: "🦒"},
+    {ord: "gitar", symbol: "🎸"}, {ord: "glass", symbol: "🥛"}, {ord: "gris", symbol: "🐷"}, {ord: "gulrot", symbol: "🥕"}, {ord: "gå", symbol: "🚶"},
+    {ord: "hals", symbol: "🧣"}, {ord: "hammer", symbol: "🔨"}, {ord: "hatt", symbol: "🎩"}, {ord: "hest", symbol: "🐎"},
+    {ord: "hjelm", symbol: "🪖"}, {ord: "hjerne", symbol: "🧠"}, {ord: "hjerte", symbol: "❤️"}, {ord: "hjul", symbol: "🛞"}, {ord: "hund", symbol: "🐕"},
+    {ord: "hus", symbol: "🏠"}, {ord: "hval", symbol: "🐋"}, {ord: "hånd", symbol: "✋"}, {ord: "is", symbol: "🍦"},
+    {ord: "isbit", symbol: "🧊"}, {ord: "jakke", symbol: "🧥"}, {ord: "jordbær", symbol: "🍓"}, {ord: "kake", symbol: "🍰"},
+    {ord: "kanin", symbol: "🐰"}, {ord: "katt", symbol: "🐈"}, {ord: "kino", symbol: "🍿"}, {ord: "kiste", symbol: "⚰️"}, {ord: "kjole", symbol: "👗"},
+    {ord: "klovn", symbol: "🤡"}, {ord: "kne", symbol: "🦵"}, {ord: "kniv", symbol: "🔪"}, {ord: "kopp", symbol: "☕"}, {ord: "kost", symbol: "🧹"},
+    {ord: "krabbe", symbol: "🦀"}, {ord: "kran", symbol: "🏗️"}, {ord: "krok", symbol: "🪝"}, {ord: "krone", symbol: "👑"}, {ord: "ku", symbol: "🐄"},
+    {ord: "lam", symbol: "LOCAL_LAM"}, {ord: "lampe", symbol: "💡"}, {ord: "le", symbol: "😂"}, {ord: "lue", symbol: "🧢"},
+    {ord: "lus", symbol: "🪳"}, {ord: "løve", symbol: "🦁"}, {ord: "mat", symbol: "🍱"}, {ord: "maursluker", symbol: "🐜"}, {ord: "melk", symbol: "🥛"},
+    {ord: "munn", symbol: "👄"}, {ord: "mus", symbol: "🐭"}, {ord: "musikk", symbol: "🎵"}, {ord: "måne", symbol: "🌙"}, {ord: "natt", symbol: "🌃"},
+    {ord: "nese", symbol: "👃"}, {ord: "nål", symbol: "🪡"}, {ord: "nøkkel", symbol: "🔑"}, {ord: "orm", symbol: "🐍"}, {ord: "ost", symbol: "🧀"},
+    {ord: "pakke", symbol: "📦"}, {ord: "paraply", symbol: "☂️"}, {ord: "penger", symbol: "💰"}, {ord: "pil", symbol: "🏹"}, {ord: "pizza", symbol: "🍕"},
+    {ord: "pære", symbol: "🍐"}, {ord: "radio", symbol: "📻"}, {ord: "regn", symbol: "🌧️"}, {ord: "rev", symbol: "🦊"},
+    {ord: "ri", symbol: "🏇"}, {ord: "ro", symbol: "🚣"}, {ord: "robot", symbol: "🤖"}, {ord: "rulleskøyter", symbol: "🛼"}, {ord: "sag", symbol: "🪚"},
+    {ord: "saks", symbol: "✂️"}, {ord: "sekk", symbol: "🎒"}, {ord: "seng", symbol: "🛌"}, {ord: "ski", symbol: "🎿"}, {ord: "skje", symbol: "🥄"},
+    {ord: "skjorte", symbol: "👕"}, {ord: "sko", symbol: "👟"}, {ord: "skole", symbol: "🏫"}, {ord: "sky", symbol: "☁️"}, {ord: "slange", symbol: "🐍"},
+    {ord: "slott", symbol: "🏰"}, {ord: "snø", symbol: "❄️"}, {ord: "snømann", symbol: "☃️"}, {ord: "sol", symbol: "☀️"}, {ord: "sopp", symbol: "🍄"},
+    {ord: "stein", symbol: "🪨"}, {ord: "stjerne", symbol: "⭐"}, {ord: "stol", symbol: "🪑"}, {ord: "sykkel", symbol: "🚲"},
+    {ord: "såpe", symbol: "🧼"}, {ord: "tann", symbol: "🦷"}, {ord: "telt", symbol: "⛺"}, {ord: "tog", symbol: "🚆"},
+    {ord: "traktor", symbol: "🚜"}, {ord: "tre", symbol: "🌳"}, {ord: "tromme", symbol: "🥁"}, {ord: "tv", symbol: "📺"}, {ord: "tå", symbol: "🦶"},
+    {ord: "ugle", symbol: "🦉"}, {ord: "ulv", symbol: "🐺"}, {ord: "ur", symbol: "⌚"},
+    {ord: "vann", symbol: "💧"}, {ord: "vante", symbol: "🧤"}, {ord: "vei", symbol: "🛣️"}, {ord: "veske", symbol: "👜"}, {ord: "vindu", symbol: "🪟"},
+    {ord: "øks", symbol: "🪓"}, {ord: "øre", symbol: "👂"}, {ord: "øye", symbol: "👁️"}
+];
+
+function toggleFasit() { document.getElementById('fasitPaper').classList.toggle('hidden'); }
+
+function getBoxInfo(c) {
+    c = c.toLowerCase();
+    let shape = "neutral", svg = "", extraClass = "", width = "w-normal";
+    if (c === 'i' || c === 'å') shape = "medium-high";
+    else if ("bdfhklt".includes(c)) shape = "ascender";
+    else if ("gjpqy".includes(c)) shape = "descender";
+    if ("bhk".includes(c)) {
+        extraClass = "special-box";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M1,1 L25,1 L25,28 L44,28 L44,71 L1,71 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    } else if (c === 'd') {
+        extraClass = "special-box";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M20,1 L44,1 L44,71 L1,71 L1,28 L20,28 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    } else if (c === 'p') {
+        extraClass = "special-box box-p-taper";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M1,1 L44,1 L44,44 L25,44 L25,71 L1,71 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    }
+    if ("il".includes(c)) width = "w-v-narrow";
+    else if ("fjt".includes(c)) width = "w-narrow";
+    return { class: `${shape} ${width} ${extraClass}`, svg: svg };
+}
+
+function createWordHtml(item, isFasit) {
+    const word = item.ord;
+    let imgUrl;
+
+    // Sjekker om ordet er "lam" for å bruke ditt eget bilde
+    if (item.symbol === "LOCAL_LAM") {
+        imgUrl = "lam.png"; // Her skriver du filnavnet på bildet ditt
+    } else {
+        // Standard Twemoji-logikk for alle andre ord
+        const charCode = Array.from(item.symbol).map(c => c.codePointAt(0).toString(16)).filter(code => code !== "fe0f").join('-');
+        imgUrl = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${charCode}.svg`;
+    }
+
+    return `<div class="word-unit">
+            <div class="image-box"><img src="${imgUrl}" alt="${word}" onerror="this.src='https://via.placeholder.com/75?text=?'"></div>
+            <div class="shapes-container"><div class="shapes">${word.split('').map(c => {
+                const info = getBoxInfo(c);
+                return `<div class="box ${info.class}">${info.svg}<span>${isFasit ? c : ''}</span></div>`;
+            }).join('')}</div></div>
+            <div class="lines"><div class="l"></div><div class="l"></div><div class="l thick"></div><div class="l"></div></div>
+        </div>`;
+}
+function run() {
+    const output = document.getElementById('output');
+    const fasit = document.getElementById('fasitOutput');
+    output.innerHTML = ""; fasit.innerHTML = "";
+    const lens = document.getElementById('chars').value.split(',').map(Number);
+    let pool = substantivDb.filter(item => lens.includes(item.ord.length));
+    pool.sort(() => Math.random() - 0.5);
+    const count = Math.min(parseInt(document.getElementById('count').value) || 6, 6);
+    const selected = pool.slice(0, count);
+    selected.forEach((item) => {
+        output.innerHTML += createWordHtml(item, false);
+        fasit.innerHTML += createWordHtml(item, true);
+    });
+}
+</script>
+</body>
+</html>
