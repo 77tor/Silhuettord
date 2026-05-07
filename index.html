@@ -2,9 +2,7 @@
 <html lang="no">
 <head>
     <meta charset="UTF-8">
-    <title>Silhuett-ord</title>
-    <link rel="icon" type="image/png" href="silhuett-ord_02.png">
-    <link rel="apple-touch-icon" href="silhuett-ord_02.png">
+    <title>Silhuett-ord v3.4</title>
     <style>
         @font-face {
             font-family: 'Trykkskrift-1';
@@ -19,230 +17,365 @@
             --total-height: 70px;
             --diff: calc(var(--total-height) - var(--stue-height));
             --primary: #2c3e50;
+            --accent: #3498db;
         }
 
-        body.mode-bilder {
-            --unit-size: 45px;
-            --stue-height: 45px;
-            --total-height: 75px;
-        }
+        body { font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; display: flex; margin: 0; background: #f0f2f5; color: #333; }
 
-        body { font-family: sans-serif; display: flex; margin: 0; background: #f0f2f5; }
-
-        #mode-overlay {
-            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
-            background: rgba(44, 62, 80, 0.98);
-            display: flex; flex-direction: column; justify-content: center; align-items: center;
-            z-index: 9999; color: white;
-        }
-        .mode-card {
-            background: white; color: #333; padding: 40px; border-radius: 12px;
-            text-align: center; max-width: 500px; box-shadow: 0 10px 30px rgba(0,0,0,0.5);
-        }
-        .mode-btn {
-            background: #3498db; color: white; border: none; padding: 15px 25px;
-            margin: 10px; border-radius: 8px; cursor: pointer; font-size: 1.1rem; font-weight: bold;
-        }
-
+        /* SIDEBAR */
         #sidebar {
             width: 350px; padding: 25px; background: var(--primary); color: white;
             height: 100vh; overflow-y: auto; position: fixed; box-sizing: border-box;
-            z-index: 100; display: flex; flex-direction: column; text-align: center;
+            z-index: 100; box-shadow: 2px 0 10px rgba(0,0,0,0.2);
         }
-
-/* STIL FOR LOGO */
-        .sidebar-logo {
-            width: 120px; /* Juster denne verdien for å endre størrelsen */
-            height: auto;
-            margin: 0 auto 20px auto;
-            display: block;
-        }
-        .sidebar-content { flex: 1; text-align: left; }
-        #sidebar h2 { font-size: 1.2rem; border-bottom: 2px solid #34495e; padding-bottom: 10px; margin-top: 0; }
-        .group { margin-bottom: 15px; }
-        label { display: block; font-size: 0.9rem; margin-bottom: 8px; color: #bdc3c7; }
-
-        select, input, textarea, button { width: 100%; padding: 10px; border-radius: 4px; border: none; margin-bottom: 10px; box-sizing: border-box; }
-        button { cursor: pointer; font-weight: bold; background: #3498db; color: white; }
+        .sidebar-logo { width: 140px; margin: 0 auto 25px; display: block; }
         
-        .btn-generate { background: #3498db; margin-top: 10px; }
-        .btn-print { background: #27ae60; }
-        .btn-reload { background: #8e44ad; }
-
-        .checkbox-group {
-            background: rgba(255,255,255,0.1);
-            padding: 12px;
-            border-radius: 6px;
-            margin-bottom: 15px;
-            display: flex;
-            align-items: center;
-            gap: 10px;
-            cursor: pointer;
-            user-select: none;
+        .nav-btn { 
+            background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); 
+            padding: 15px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; 
+            text-align: left; font-weight: bold; width: 100%; transition: all 0.2s;
         }
-        .checkbox-group:hover { background: rgba(255,255,255,0.15); }
-        .checkbox-group input { width: 18px; height: 18px; margin: 0; cursor: pointer; }
-        .checkbox-group label { margin: 0; color: white; font-size: 0.95rem; cursor: pointer; display: inline; }
+        .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
 
-        #preview { margin-left: 350px; padding: 20px; width: calc(100% - 350px); display: flex; flex-direction: column; align-items: center; }
-        .paper {
-            background: white; width: 210mm; min-height: 290mm; padding: 15mm;
-            box-shadow: 0 0 20px rgba(0,0,0,0.1); margin-bottom: 30px; box-sizing: border-box;
+        .sidebar-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+        .toggle-container {
+            display: flex; align-items: center; justify-content: space-between;
+            background: rgba(0,0,0,0.2); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;
+            font-size: 0.9rem;
+        }
+        .switch { position: relative; display: inline-block; width: 40px; height: 20px; flex-shrink: 0; }
+        .switch input { opacity: 0; width: 0; height: 0; }
+        .slider { position: absolute; cursor: pointer; top: 0; left: 0; right: 0; bottom: 0; background-color: #ccc; transition: .4s; border-radius: 20px; }
+        .slider:before { position: absolute; content: ""; height: 14px; width: 14px; left: 3px; bottom: 3px; background-color: white; transition: .4s; border-radius: 50%; }
+        input:checked + .slider { background-color: #27ae60; }
+        input:checked + .slider:before { transform: translateX(20px); }
+
+        /* PAPER & LAYOUT */
+        #preview { 
+    margin-left: 350px; 
+    padding: 20px 0; /* Litt luft i toppen og bunnen */
+    width: calc(100% - 350px); 
+    display: block; /* VIKTIG: Endre fra flex til block */
+    background: #f0f2f5; /* Matcher body-bakgrunnen */
+}
+
+/* Tvinger selve arket til å starte innholdet helt øverst */
+.paper { 
+    background: white; 
+    width: 210mm; 
+    min-height: 295mm; 
+    padding: 2mm 15mm; /* Ekstremt lav topp-padding (2mm) */
+    margin: 0 auto 40px auto; 
+    box-sizing: border-box; 
+    display: block; 
+    position: relative;
+    overflow: hidden; 
+}
+
+/* Fjerner all luft rundt overskriften og info-boksen */
+.paper-header { 
+    display: flex; 
+    justify-content: space-between; 
+    align-items: flex-start; 
+    margin-top: 0 !important;
+    padding-top: 0 !important;
+    margin-bottom: 10px; 
+    border-bottom: 3px solid #333; 
+}
+
+/* Denne er kritisk: Nettlesere legger ofte på 20px+ her som standard */
+.paper-header h1 {
+    margin: 0 !important; 
+    padding: 0 !important;
+    line-height: 3; /* Drar teksten oppover */
+    font-size: 28px;
+    display: block;
+}
+
+/* Sørger for at navneboksen ikke dytter ned headeren */
+.info-box { 
+    min-width: 200px; /* Justert fra width: 250px */
+    border: 2px solid #333; 
+    padding: 12px;    /* Litt mer luft inni boksen nå som datoen er borte */
+    font-size: 14px; 
+    border-radius: 4px;
+    margin-top: 15px; /* Dette flytter boksen NED fra toppen */
+    margin-right: 0;
+    align-self: flex-start; /* Holder den på toppen av header-linjen */
+}
+
+.paper-header p#task-desc {
+    margin-top: 2px;     /* Litt tettere opp mot overskriften */
+}
+
+        /* SKRIVELINJER */
+.lines-container {
+    width: 100%;          /* Bruker all tilgjengelig plass i kolonnen */
+    max-width: 300px;     /* Men stopper her så den ikke blir komisk lang */
+    margin: 10px auto;
+}
+        .l { border-bottom: 1px solid #ccc; height: 18px; width: 100%; }
+        .l.thick { border-bottom: 3px solid #333; }
+
+        /* ORDBANK PÅ SIDEN */
+        #on-page-ordbank {
+            border: 2px solid #333; padding: 12px; margin-bottom: 30px; border-radius: 8px;
+            display: flex; flex-wrap: wrap; gap: 15px; justify-content: center;
+            font-family: 'Trykkskrift-1'; font-size: 24px;
         }
 
-        .paper-header { display: flex; justify-content: space-between; align-items: flex-start; width: 100%; margin-bottom: 20px; border-bottom: 2px solid #eee; padding-bottom: 10px; }
-        .info-box { width: 320px; background: #fff; border: 1px solid #ccc; padding: 8px; font-size: 0.8rem; border-radius: 4px; line-height: 1.3; }
+/* Sørg for at grid ikke strekker seg */
+.grid-container { 
+    display: grid; 
+    grid-template-columns: repeat(2, 1fr); 
+    gap: 25px 40px; 
+    width: 100%;
+    align-content: start; 
+}
+.word-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    justify-content: flex-start;
+    width: 100%;          /* Sørger for at den bruker plassen i kolonnen sin */
+    margin-bottom: 30px;  /* Litt luft ned til neste oppgave */
+}
+        
+.image-box { 
+    height: 75px; /* Litt lavere enn før for å gi plass til linjer under */
+    margin-bottom: 10px; 
+    display: flex; 
+    align-items: center; 
+}
+        .image-box img { height: 75px; width: 75px; object-fit: contain; }
 
-        .grid-container {
-            display: grid;
-            grid-template-columns: repeat(2, 1fr);
-            gap: 20px 40px; 
-            width: 100%;
-        }
-
-        .mode-bilder .grid-container { gap: 60px 40px; }
-        .mode-bilder .word-unit { min-height: 140px; }
-        .mode-bilder .image-box { height: 85px; margin-bottom: 15px; }
-        .mode-bilder .image-box img { width: 80px; height: 80px; }
-        .mode-bilder .shapes-wrapper { margin-bottom: 35px; }
-        .mode-bilder .box { font-size: 38px; }
-
-        .word-unit { display: flex; flex-direction: column; min-height: 110px; page-break-inside: avoid; align-items: center; justify-content: flex-end; }
-        .image-box { display: flex; align-items: center; }
-        .shapes-wrapper { height: var(--total-height); display: flex; align-items: flex-end; position: relative; margin-bottom: 20px; }
-        .shapes { display: flex; align-items: flex-end; }
-        .box { width: var(--unit-size); border: 2px solid #000; margin-left: -2px; background: #fff; box-sizing: border-box; display: flex; justify-content: center; position: relative; font-family: 'Trykkskrift-1', sans-serif; font-size: 32px; line-height: 1; }
-
+        /* SILHUETTER */
+        .shapes-wrapper { display: flex; align-items: flex-end; }
+.box { 
+    position: relative; /* VIKTIG: Dette holder bokstaven på plass inni boksen */
+    width: var(--unit-size); 
+    border: 2.5px solid #000; 
+    margin-left: -2.5px; 
+    background: #fff; 
+    box-sizing: border-box; 
+    display: flex; 
+    justify-content: center; 
+    font-family: 'Trykkskrift-1'; 
+    font-size: 32px;
+}
         .stue { height: var(--stue-height); align-items: flex-end; }
         .stue-loft { height: var(--total-height); align-items: flex-end; }
-        .stue-kjeller { height: var(--total-height); margin-bottom: calc(var(--diff) * -1); align-items: flex-start; }
-        .box span { padding-bottom: 2px; text-align: center; width: 100%; }
-        .stue-kjeller span { padding-top: 2px; padding-bottom: 0; }
+        .stue-kjeller { 
+            height: var(--total-height); margin-bottom: calc(var(--diff) * -1); 
+            display: flex; flex-direction: column; justify-content: flex-start; align-items: center;
+        }
+        .stue-kjeller::before { content: ""; display: block; min-height: var(--stue-height); margin-bottom: calc(var(--stue-height) * -1); }
+/* FELLES REGEL - Erstatter alle andre ".box span" og ".special-box span" */
+.box span { 
+    position: absolute;
+    bottom: 3px !important; /* Tvinger i, å, n, b osv. ned på samme linje */
+    left: 0;
+    width: 100%;
+    text-align: center;
+    line-height: 1;
+    z-index: 5; /* Høyere enn SVG-en (som har z-index 1) */
+    padding: 0 !important;
+    margin: 0 !important;
+}
 
-        #word-bank-list { display: flex; flex-wrap: wrap; justify-content: center; gap: 10px; font-size: 1.3rem; font-weight: bold; margin: 30px auto; max-width: 85%; }
-        .bank-word { border: 2px solid #333; padding: 8px 15px; border-radius: 6px; }
+/* UNNTAKET: Kjeller-bokstaver må løftes opp så halen henger under */
+.stue-kjeller span { 
+    bottom: 28px !important; 
+}
 
+        /* MODAL */
+        .modal {
+            position: fixed; top: 0; left: 0; width: 100%; height: 100%;
+            background: rgba(0,0,0,0.85); z-index: 2000;
+            display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px);
+        }
+        .modal-content { background: white; color: #333; padding: 35px; border-radius: 15px; width: 90%; max-width: 550px; }
+
+        .btn-green { background: #27ae60; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
+        .btn-red { background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; }
         .hidden { display: none !important; }
 
-        @media print {
-            @page { size: A4; margin: 0; }
-            body { background: white; }
-            #sidebar, #mode-overlay { display: none !important; }
-            #preview { margin: 0 !important; width: 100% !important; padding: 0 !important; }
-            .paper {
-                box-shadow: none !important; margin: 0 !important; width: 210mm !important;
-                height: 297mm !important; 
-                padding: 5mm 15mm 10mm 15mm !important; 
-                page-break-after: always;
-            }
-            .grid-container { gap: 25px 40px; }
-            .mode-bilder .grid-container { gap: 80px 40px; }
-            #bankPaper { display: block !important; }
-            #bankPaper.hidden { display: none !important; }
-            #fasitPaper { display: block !important; }
-            #fasitPaper.hidden { display: none !important; }
-        }
+/* Spesialstørrelser for bokstaver */
+.w-v-narrow { width: 22px !important; } 
+.w-narrow { width: 32px !important; } 
+.w-normal { width: var(--unit-size, 30px); }
+
+
+/* SVG-boksene skal ikke ha kantlinje, men bokstaven inni følger samme bunnlinje */
+.special-box { border: none !important; background: transparent !important; }
+.special-box svg { position: absolute; top: 0; left: 0; width: 100%; height: 100%; z-index: 1; }
+
+
+/* Justering for i og å */
+.medium-high { height: 45px; } /* Juster høyden så den passer din stil */
+
+@media print {
+    /* Nullstiller alt for å fjerne nettleserens egne marginer */
+    body, #preview { 
+        background: white !important; 
+        margin: 0 !important; 
+        padding: 0 !important; 
+        width: 100% !important;
+    }
+
+    #sidebar, .modal, .btn-green, .btn-red { 
+        display: none !important; 
+    }
+
+    .paper { 
+        /* Denne linjen er nøkkelen: -10mm drar innholdet opp på arket */
+        margin-top: -5mm !important; 
+        margin-left: auto !important;
+        margin-right: auto !important;
+        box-shadow: none !important; 
+        border: none !important;
+        padding-top: 5mm !important;
+        page-break-after: always; 
+    }
+
+    /* Sikrer at skjulte elementer faktisk forblir borte */
+    .hidden { display: none !important; }
+}
     </style>
 </head>
-<body class="mode-bilder">
+<body>
 
-<div id="mode-overlay">
-    <div class="mode-card">
-        <h2>Silhuett-ord</h2>
-        <p class="mode-description">Velg om du vil generere oppgaver basert på bilder, eller skrive inn dine egne ord manuelt.</p>
-        <div style="display: flex; gap: 10px; justify-content: center;">
-            <button class="mode-btn" onclick="setMode('bilder')">Bilder</button>
-            <button class="mode-btn" onclick="setMode('egne')">Egne ord</button>
+<div id="sidebar">
+    <img src="silhuett-ord_03.png" class="sidebar-logo">
+    
+    <button class="nav-btn" onclick="openModal('modal-enkel-tekst')">1. ENKEL TEKST<br><small>Egne ord, ingen bilder</small></button>
+    <button class="nav-btn" onclick="openModal('modal-enkel-auto')">2. ENKEL BILDER<br><small>Auto-generert fra liste</small></button>
+    <button class="nav-btn" onclick="openModal('modal-avansert')">3. AVANSERT<br><small>Egne bilder & utvalg</small></button>
+
+    <div class="sidebar-section">
+        <div class="toggle-container">
+            <span>Vis ordbank</span>
+            <label class="switch">
+                <input type="checkbox" id="global-ordbank-page" onchange="updateVisibility()">
+                <span class="slider"></span>
+            </label>
         </div>
+        <div class="toggle-container">
+            <span>Vis ordbank på egen side</span>
+            <label class="switch">
+                <input type="checkbox" id="global-ordbank-sheet" onchange="updateVisibility()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="toggle-container">
+            <span>Vis fasit-side</span>
+            <label class="switch">
+                <input type="checkbox" id="global-fasit" onchange="updateVisibility()">
+                <span class="slider"></span>
+            </label>
+        </div>
+        <div class="toggle-container">
+            <span>Legg til skrivelinjer</span>
+            <label class="switch">
+                <input type="checkbox" id="global-lines" onchange="updateVisibility()">
+                <span class="slider"></span>
+            </label>
+        </div>
+<div class="toggle-container">
+    <span>Tilpassede silhuetter</span>
+    <label class="switch">
+        <input type="checkbox" id="custom-silhouettes" onchange="renderAll()">
+        <span class="slider"></span>
+    </label>
+</div>
+    </div>
+
+    <div style="margin-top: 20px;">
+        <button class="btn-green" onclick="window.print()">SKRIV UT (PDF)</button>
+        <button class="btn-red" style="background:#7f8c8d" onclick="location.reload()">NULLSTILL</button>
     </div>
 </div>
 
-<div id="sidebar">
-<img src="silhuett-ord_03.png" alt="Silhuett-ord logo" class="sidebar-logo">
-    <div class="sidebar-content">
-        <h2 id="mode-title">Innstillinger</h2>
+<div id="modal-enkel-tekst" class="modal">
+    <div class="modal-content">
+        <h2>Skriv egne ord</h2>
+        <textarea id="input-tekst" placeholder="is, sol, ape, kake..." rows="5" style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
+        <button class="btn-green" onclick="generer('tekst')">GENERER</button>
+        <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+    </div>
+</div>
 
-        <div id="settings-bilder">
-            <div class="group">
-                <label>Bokstavantall:</label>
-                <select id="chars">
-                    <option value="2,3,4,5">2 til 5 bokstaver</option>
-                    <option value="3">3 bokstaver</option>
-                    <option value="4">4 bokstaver</option>
-                </select>
-            </div>
-            <div class="group"><label>Antall ord (maks 6):</label><input type="number" id="count" value="6" min="1" max="6"></div>
-        </div>
+<div id="modal-enkel-auto" class="modal">
+    <div class="modal-content">
+        <h2>Auto-generer med bilder</h2>
+        <label>Antall ord:</label>
+        <select id="auto-count" style="width:100%; padding:10px; margin-bottom:15px;"><option value="6">6 ord</option><option value="8">8 ord</option><option value="12">12 ord</option></select>
+        <button class="btn-green" onclick="generer('auto')">GENERER</button>
+        <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+    </div>
+</div>
 
-        <div id="settings-egne" class="hidden">
-            <div class="group">
-                <label>Skriv ord (maks 12, komma-separert):</label>
-                <textarea id="custom-words" placeholder="is, sol, ape..."></textarea>
-            </div>
-            <div class="group">
-                <label>Plassering av ord:</label>
-                <select id="word-placement" onchange="updateBankPlacementOnly()">
-                    <option value="bank">I ordbank øverst</option>
-                    <option value="page">I ordbank på egen side</option>
-                    <option value="none">Ingen tekst</option>
-                </select>
-            </div>
-        </div>
-
-        <button class="btn-generate" onclick="run()">GENERER</button>
+<div id="modal-avansert" class="modal">
+    <div class="modal-content" style="max-width: 800px;">
+        <h2>Avansert utvalg</h2>
         
-        <hr style="border: 0; border-top: 1px solid #34495e; margin: 15px 0;">
-
-        <div class="checkbox-group" onclick="toggleFasitCheckbox()">
-            <input type="checkbox" id="fasit-checkbox" onchange="updateFasitVisibility()">
-            <label for="fasit-checkbox">Inkluder fasit</label>
+        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc;">
+            <p style="margin: 0 0 10px 0; font-weight: bold;">Legg til eget bilde fra PC:</p>
+            <div style="display: flex; gap: 10px;">
+                <input type="text" id="custom-word-input" placeholder="Skriv ordet her..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
+                <input type="file" id="custom-image-input" accept="image/*" style="display: none;">
+                <button class="btn-green" style="width: auto; margin: 0; padding: 8px 15px;" onclick="document.getElementById('custom-image-input').click()">VELG BILDE</button>
+            </div>
+            <small id="file-name-display" style="display: block; margin-top: 5px; color: #666;"></small>
         </div>
+
+        <div id="avansert-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 15px;"></div>
         
-        <button class="btn-print" onclick="window.print()">SKRIV UT</button>
-        <button class="btn-reload" onclick="location.reload()">BYTT MODUS</button>
+        <div style="display: flex; flex-direction: column; gap: 5px;">
+            <button class="btn-green" onclick="generer('avansert')">GENERER VALGTE</button>
+            <button class="btn-red" style="background:#7f8c8d;" onclick="nullstillAvansertValg()">NULLSTILL VALG</button>
+            <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+        </div>
     </div>
 </div>
 
 <div id="preview">
-    <div class="paper hidden" id="bankPaper">
-        <h1>Ordbank</h1>
-        <p>Her er ordene du skal bruke i oppgavene:</p>
-        <div id="word-bank-list"></div>
-    </div>
-
-    <div class="paper" id="mainPaper">
+    <div class="paper" id="paper-main">
         <div class="paper-header">
-            <h1 style="margin:0; font-size: 1.8rem;">Silhuett-ord</h1>
-            <div class="info-box">
-                <strong>Oppgave:</strong><br>
-                <span id="task-text">Velg modus og trykk generer.</span>
+            <div>
+                <h1 style="margin:0; font-size:28px;">SILHUETT-ORD</h1>
+                <p id="task-desc" style="margin:5px 0 0; font-style:italic;">Oppgave her...</p>
             </div>
+            <div class="info-box">Navn: __________________________</div>
         </div>
-        <div id="inline-bank" class="hidden" style="margin-bottom: 20px; display: flex; justify-content: center; gap: 8px; flex-wrap: wrap; font-weight: bold; border: 2px solid #333; padding: 10px; font-size: 1.1rem;"></div>
+        <div id="on-page-ordbank" class="hidden"></div>
         <div id="output" class="grid-container"></div>
     </div>
 
-    <div class="paper hidden" id="fasitPaper">
-        <h1>Fasit</h1>
-        <div id="fasitOutput" class="grid-container"></div>
+    <div class="paper hidden" id="paper-ordbank-sheet">
+        <div class="paper-header"><h1>Ordbank</h1></div>
+        <div id="ordbank-sheet-output" style="display:flex; flex-wrap:wrap; gap:20px; font-family:'Trykkskrift-1'; font-size:30px; padding:20px; border:2px solid #eee;"></div>
+    </div>
+
+    <div class="paper hidden" id="paper-fasit">
+        <div class="paper-header"><h1>Fasit</h1></div>
+        <div id="fasit-output" class="grid-container"></div>
     </div>
 </div>
 
 <script>
-let currentMode = 'bilder';
-let currentActiveWords = []; 
-
+let selectedAdvancedWords = []; // Midlertidig liste for avansert utvalg
+// Database - Legg til dine egne symboler her
 const substantivDb = [
-{ord: "agurk", symbol: "🥒"}, {ord: "and", symbol: "🦆"}, {ord: "anker", symbol: "⚓"},
+    {ord: "agurk", symbol: "🥒"}, {ord: "and", symbol: "🦆"}, {ord: "anker", symbol: "⚓"},
     {ord: "ape", symbol: "🐒"}, {ord: "appelsin", symbol: "🍊"}, {ord: "arm", symbol: "💪"}, {ord: "avis", symbol: "📰"}, 
-
-{ord: "bad", symbol: "🛀"}, {ord: "ball", symbol: "⚽"}, {ord: "bamse", symbol: "🧸"}, {ord: "banan", symbol: "🍌"}, {ord: "belte", symbol: "🥋"},
+    {ord: "bad", symbol: "🛀"}, {ord: "ball", symbol: "⚽"}, {ord: "bamse", symbol: "🧸"}, {ord: "banan", symbol: "🍌"}, {ord: "belte", symbol: "🥋"},
     {ord: "bie", symbol: "🐝"}, {ord: "bil", symbol: "🚗"}, {ord: "bille", symbol: "🐞"}, {ord: "bjelle", symbol: "🔔"}, {ord: "bjørn", symbol: "🐻"},
     {ord: "blad", symbol: "🍃"}, {ord: "blomst", symbol: "🌻"}, {ord: "bløtkake", symbol: "🎂"}, {ord: "bok", symbol: "📖"},
     {ord: "borg", symbol: "🏰"}, {ord: "brev", symbol: "✉️"}, {ord: "brille", symbol: "👓"}, {ord: "bro", symbol: "🌉"}, {ord: "brokkoli", symbol: "🥦"},
     {ord: "brus", symbol: "🥤"}, {ord: "brød", symbol: "🍞"}, {ord: "bue", symbol: "🏹"}, {ord: "buss", symbol: "🚌"}, {ord: "by", symbol: "🏙️"},
     {ord: "bål", symbol: "🔥"}, {ord: "båt", symbol: "⛵"}, {ord: "bær", symbol: "🍓"}, 
-{ord: "dinosaur", symbol: "🦖"}, {ord: "do", symbol: "🚽"}, {ord: "drage", symbol: "🐉"}, {ord: "due", symbol: "🕊️"}, {ord: "dusj", symbol: "🚿"}, 
+    {ord: "dinosaur", symbol: "🦖"}, {ord: "do", symbol: "🚽"}, {ord: "drage", symbol: "🐉"}, {ord: "due", symbol: "🕊️"}, {ord: "dusj", symbol: "🚿"}, 
     {ord: "dør", symbol: "🚪"}, {ord: "egg", symbol: "🥚"}, {ord: "ekorn", symbol: "🐿️"}, {ord: "elefant", symbol: "🐘"}, {ord: "engel", symbol: "😇"},
     {ord: "eple", symbol: "🍎"}, {ord: "fisk", symbol: "🐟"}, {ord: "fjell", symbol: "🏔️"}, {ord: "flagg", symbol: "🚩"},
     {ord: "flaske", symbol: "🍼"}, {ord: "fly", symbol: "✈️"}, {ord: "fot", symbol: "🦶"}, {ord: "frosk", symbol: "🐸"}, {ord: "fugl", symbol: "🐦"},
@@ -255,148 +388,246 @@ const substantivDb = [
     {ord: "kanin", symbol: "🐰"}, {ord: "katt", symbol: "🐈"}, {ord: "kino", symbol: "🍿"}, {ord: "kiste", symbol: "⚰️"}, {ord: "kjole", symbol: "👗"},
     {ord: "klovn", symbol: "🤡"}, {ord: "kne", symbol: "🦵"}, {ord: "kniv", symbol: "🔪"}, {ord: "kopp", symbol: "☕"}, {ord: "kost", symbol: "🧹"},
     {ord: "krabbe", symbol: "🦀"}, {ord: "kran", symbol: "🏗️"}, {ord: "krok", symbol: "🪝"}, {ord: "krone", symbol: "👑"}, {ord: "ku", symbol: "🐄"},
-    {ord: "lam", symbol: "LOCAL_LAM"}, {ord: "lampe", symbol: "💡"}, {ord: "le", symbol: "😂"}, {ord: "lue", symbol: "🧢"},
-    {ord: "lus", symbol: "🪳"}, {ord: "løve", symbol: "🦁"}, {ord: "mat", symbol: "🍱"}, {ord: "maursluker", symbol: "🐜"}, {ord: "melk", symbol: "🥛"},
-    {ord: "munn", symbol: "👄"}, {ord: "mur", symbol: "🧱"}, {ord: "mus", symbol: "🐭"}, {ord: "musikk", symbol: "🎵"}, {ord: "måne", symbol: "🌙"}, {ord: "natt", symbol: "🌃"},
-    {ord: "nese", symbol: "👃"}, {ord: "nål", symbol: "🪡"}, {ord: "nøkkel", symbol: "🔑"}, {ord: "orm", symbol: "🐍"}, {ord: "ost", symbol: "🧀"},
-    {ord: "pakke", symbol: "📦"}, {ord: "paraply", symbol: "☂️"}, {ord: "penger", symbol: "💰"}, {ord: "pil", symbol: "🏹"}, {ord: "pizza", symbol: "🍕"},
-    {ord: "pære", symbol: "🍐"}, {ord: "radio", symbol: "📻"}, {ord: "regn", symbol: "🌧️"}, {ord: "rev", symbol: "🦊"},
-    {ord: "ri", symbol: "🏇"}, {ord: "ro", symbol: "🚣"}, {ord: "robot", symbol: "🤖"}, {ord: "rose", symbol: "LOCAL_ROSE"}, {ord: "rulleskøyter", symbol: "🛼"}, {ord: "sag", symbol: "🪚"},
-    {ord: "saks", symbol: "✂️"}, {ord: "sekk", symbol: "🎒"}, {ord: "seng", symbol: "🛌"}, {ord: "sil", symbol: "LOCAL_SIL"}, {ord: "ski", symbol: "🎿"}, {ord: "skje", symbol: "🥄"},
-    {ord: "skjorte", symbol: "👕"}, {ord: "sko", symbol: "👟"}, {ord: "skole", symbol: "🏫"}, {ord: "sky", symbol: "☁️"}, {ord: "slange", symbol: "🐍"}, {ord: "spor", symbol: "🐾"},
-    {ord: "slott", symbol: "🏰"}, {ord: "snø", symbol: "❄️"}, {ord: "snømann", symbol: "☃️"}, {ord: "sol", symbol: "☀️"}, {ord: "sopp", symbol: "🍄"},
-    {ord: "stein", symbol: "🪨"}, {ord: "stjerne", symbol: "⭐"}, {ord: "stol", symbol: "🪑"}, {ord: "sykkel", symbol: "🚲"},
+    {ord: "lampe", symbol: "💡"}, {ord: "lue", symbol: "🧢"}, {ord: "lus", symbol: "🪳"}, {ord: "løve", symbol: "🦁"}, {ord: "mat", symbol: "🍱"}, 
+    {ord: "melk", symbol: "🥛"}, {ord: "munn", symbol: "👄"}, {ord: "mur", symbol: "🧱"}, {ord: "mus", symbol: "🐭"}, {ord: "musikk", symbol: "🎵"}, 
+    {ord: "måne", symbol: "🌙"}, {ord: "natt", symbol: "🌃"}, {ord: "nese", symbol: "👃"}, {ord: "nål", symbol: "🪡"}, {ord: "nøkkel", symbol: "🔑"}, 
+    {ord: "orm", symbol: "🐍"}, {ord: "ost", symbol: "🧀"}, {ord: "pakke", symbol: "📦"}, {ord: "paraply", symbol: "☂️"}, {ord: "penger", symbol: "💰"}, 
+    {ord: "pil", symbol: "🏹"}, {ord: "pizza", symbol: "🍕"}, {ord: "pære", symbol: "🍐"}, {ord: "radio", symbol: "📻"}, {ord: "regn", symbol: "🌧️"}, 
+    {ord: "rev", symbol: "🦊"}, {ord: "robot", symbol: "🤖"}, {ord: "saks", symbol: "✂️"}, {ord: "sekk", symbol: "🎒"}, {ord: "seng", symbol: "🛌"}, 
+    {ord: "ski", symbol: "🎿"}, {ord: "skje", symbol: "🥄"}, {ord: "skjorte", symbol: "👕"}, {ord: "sko", symbol: "👟"}, {ord: "skole", symbol: "🏫"}, 
+    {ord: "sky", symbol: "☁️"}, {ord: "slange", symbol: "🐍"}, {ord: "slott", symbol: "🏰"}, {ord: "snø", symbol: "❄️"}, {ord: "sol", symbol: "☀️"}, 
+    {ord: "sopp", symbol: "🍄"}, {ord: "stein", symbol: "🪨"}, {ord: "stjerne", symbol: "⭐"}, {ord: "stol", symbol: "🪑"}, {ord: "sykkel", symbol: "🚲"},
     {ord: "såpe", symbol: "🧼"}, {ord: "tann", symbol: "🦷"}, {ord: "telt", symbol: "⛺"}, {ord: "tog", symbol: "🚆"},
     {ord: "traktor", symbol: "🚜"}, {ord: "tre", symbol: "🌳"}, {ord: "tromme", symbol: "🥁"}, {ord: "tv", symbol: "📺"}, {ord: "tå", symbol: "🦶"},
-    {ord: "ugle", symbol: "🦉"}, {ord: "ulv", symbol: "🐺"}, {ord: "ur", symbol: "⌚"},
-    {ord: "vann", symbol: "💧"}, {ord: "vante", symbol: "🧤"}, {ord: "vei", symbol: "🛣️"}, {ord: "veske", symbol: "👜"}, {ord: "vindu", symbol: "🪟"},
-    {ord: "øks", symbol: "🪓"}, {ord: "øre", symbol: "👂"}, {ord: "øye", symbol: "👁️"}
-
+    {ord: "ugle", symbol: "🦉"}, {ord: "ulv", symbol: "🐺"}, {ord: "ur", symbol: "⌚"}, {ord: "vann", symbol: "💧"}, {ord: "øks", symbol: "🪓"}
 ];
 
-function setMode(mode) {
-    currentMode = mode;
-    document.body.className = 'mode-' + mode;
-    document.getElementById('mode-overlay').classList.add('hidden');
-    document.getElementById('settings-bilder').classList.toggle('hidden', mode !== 'bilder');
-    document.getElementById('settings-egne').classList.toggle('hidden', mode !== 'egne');
-}
+let activeWords = [];
+let mode = 'bilder';
 
-function toggleFasitCheckbox() {
-    const cb = document.getElementById('fasit-checkbox');
-    if (event.target !== cb) {
-        cb.checked = !cb.checked;
-        updateFasitVisibility();
+// Denne skal nå KUN åpne og tegne, ikke tømme listen
+function openModal(id) { 
+    document.getElementById(id).style.display = 'flex'; 
+    if(id === 'modal-avansert') {
+        renderAvansert(); 
     }
 }
 
-function updateFasitVisibility() {
-    const cb = document.getElementById('fasit-checkbox');
-    const fp = document.getElementById('fasitPaper');
-    if (cb.checked) {
-        fp.classList.remove('hidden');
-    } else {
-        fp.classList.add('hidden');
+
+
+// Håndterer filvalg og visning av filnavn
+document.getElementById('custom-image-input')?.addEventListener('change', function(e) {
+    const file = e.target.files[0];
+    const word = document.getElementById('custom-word-input').value.trim();
+    const nameDisplay = document.getElementById('file-name-display');
+
+    if (!file) return;
+    if (!word) {
+        alert("Skriv inn ordet før du velger bilde!");
+        e.target.value = ''; // Nullstill filfeltet
+        return;
     }
-}
 
-function updateBankPlacementOnly() {
-    if (currentActiveWords.length === 0 || currentMode === 'bilder') return;
-    
-    updateTaskText();
-    const inlineBank = document.getElementById('inline-bank');
-    const bankPaper = document.getElementById('bankPaper');
-    const bankList = document.getElementById('word-bank-list');
-    const placement = document.getElementById('word-placement').value;
+    const reader = new FileReader();
+    reader.onload = function(event) {
+        // Lag et nytt "objekt" som ligner på de i databasen
+        const newEntry = {
+            ord: word.toLowerCase(),
+            symbol: event.target.result, // Dette er selve bilde-dataen
+            isCustom: true // Markør så vi vet det ikke er en Twemoji
+        };
 
-    inlineBank.innerHTML = "";
-    bankList.innerHTML = "";
-    inlineBank.classList.add('hidden');
-    bankPaper.classList.add('hidden');
+        // Legg det øverst i databasen så det er lett å finne
+        substantivDb.unshift(newEntry);
+        
+        // Marker det som valgt med en gang
+        selectedAdvancedWords.push(newEntry);
 
-    if (placement !== 'none') {
-        const shuffled = [...currentActiveWords].sort(() => 0.5 - Math.random());
-        if (placement === 'bank') {
-            inlineBank.classList.remove('hidden');
-            inlineBank.style.display = "flex";
-            shuffled.forEach(item => {
-                inlineBank.innerHTML += `<span style="border:1px solid #000; padding:2px 10px; margin:4px;">${item.ord}</span>`;
-            });
-        } else if (placement === 'page') {
-            bankPaper.classList.remove('hidden');
-            shuffled.forEach(item => {
-                bankList.innerHTML += `<div class="bank-word">${item.ord}</div>`;
-            });
-        }
-    }
-}
+        // Nullstill input-feltene
+        document.getElementById('custom-word-input').value = '';
+        nameDisplay.innerText = "";
+        
+        // Oppdater rutenettet
+        renderAvansert();
+    };
+    reader.readAsDataURL(file);
+});
 
-function getBoxClass(c) {
+
+function getBoxInfo(c) {
     c = c.toLowerCase();
-    const loft = "bdfhklt";
-    const kjeller = "gjpqy";
-    if (loft.includes(c)) return "stue-loft";
-    if (kjeller.includes(c)) return "stue-kjeller";
-    return "stue";
+    let shape = "stue", svg = "", extraClass = "", width = "w-normal";
+    
+    if ("bdfhklt".includes(c)) {
+        shape = "stue-loft";
+    } else if (c === 'i' || c === 'å') {
+        shape = "medium-high"; // Bruker mellomhøyden fra din CSS
+    } else if ("gjpqy".includes(c)) {
+        shape = "stue-kjeller";
+    }
+
+    // SVG-stier med tallet 30 (som vi ble enige om)
+    if ("bhk".includes(c)) {
+        extraClass = "special-box";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M1,1 L25,1 L25,30 L44,30 L44,71 L1,71 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    } else if (c === 'd') {
+        extraClass = "special-box";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M20,1 L44,1 L44,71 L1,71 L1,30 L20,30 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    } else if (c === 'p') {
+        extraClass = "special-box";
+        svg = `<svg viewBox="0 0 45 72" preserveAspectRatio="none"><path d="M1,1 L44,1 L44,42 L25,42 L25,71 L1,71 Z" fill="white" stroke="black" stroke-width="2"/></svg>`;
+    }
+
+    // Bredder
+    if (c === 'i' || c === 'l') width = "w-v-narrow";
+    else if ("fjtå".includes(c)) width = "w-narrow"; 
+
+    return { class: `${shape} ${width} ${extraClass}`, svg: svg };
+}
+// Ny funksjon for å tømme utvalget manuelt inne i modalen
+function nullstillAvansertValg() {
+    selectedAdvancedWords = [];
+    renderAvansert();
 }
 
-function updateTaskText() {
-    const taskElement = document.getElementById('task-text');
-    if (currentMode === 'bilder') {
-        taskElement.innerText = "Skriv ordene det er bilde av inn i boksene.";
-    } else {
-        const placement = document.getElementById('word-placement').value;
-        let text = "Skriv riktig ord inn i boksene.";
-        if (placement === 'bank') text += " Bruk ordbanken øverst.";
-        if (placement === 'page') text += " Bruk ordbanken på det andre arket.";
-        taskElement.innerText = text;
+function closeModals() { 
+    document.querySelectorAll('.modal').forEach(m => m.style.display = 'none'); 
+}
+
+// OPPDATERT HYBRID BILDE-FUNKSJON
+function getTwemojiUrl(item) {
+    // 1. Sjekk om dette er et eget opplastet bilde (fra PC)
+    if (item && typeof item === 'object' && item.isCustom) {
+        return item.symbol; // Dette er selve bilde-dataen (Base64)
     }
+    
+    // 2. Finn ut hva symbolet er (håndterer både objekter og løse emojier)
+    const symbol = typeof item === 'string' ? item : (item ? item.symbol : "");
+    
+    if (!symbol) return ""; 
+
+    // 3. Vanlig Twemoji-logikk for standard-ikonene i databasen
+    const charCode = Array.from(symbol).map(c => c.codePointAt(0).toString(16)).filter(code => code !== "fe0f").join('-');
+    return `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${charCode}.svg`;
+}
+
+function renderAvansert() {
+    const grid = document.getElementById('avansert-grid');
+    grid.innerHTML = "";
+    
+    substantivDb.forEach(item => {
+        const isSelected = selectedAdvancedWords.some(w => w.ord === item.ord);
+        const div = document.createElement('div');
+        
+        // Legger til en blå ramme og lysere bakgrunn hvis bildet er valgt
+        div.style.cssText = `
+            border: ${isSelected ? '3px solid #3498db' : '1px solid #eee'}; 
+            background: ${isSelected ? '#ebf5fb' : 'white'};
+            padding: 5px; cursor: pointer; text-align: center; border-radius: 8px; transition: all 0.2s;
+        `;
+        
+        div.innerHTML = `<img src="${getTwemojiUrl(item)}" style="width:30px; height:30px; object-fit:contain;"><br><small>${item.ord}</small>`;
+        
+        div.onclick = () => {
+            const index = selectedAdvancedWords.findIndex(w => w.ord === item.ord);
+            if (index > -1) {
+                selectedAdvancedWords.splice(index, 1); // Fjern hvis allerede valgt
+            } else {
+                selectedAdvancedWords.push(item); // Legg til hvis ikke valgt
+            }
+            renderAvansert(); // Tegn på nytt for å vise markering
+        };
+        grid.appendChild(div);
+    });
+}
+
+function generer(type) {
+    const withLines = document.getElementById('global-lines').checked;
+    
+    if(type === 'tekst') {
+        mode = 'tekst';
+        let rawWords = document.getElementById('input-tekst').value
+            .split(',')
+            .map(w => ({ord: w.trim()}))
+            .filter(w => w.ord.length > 0);
+        
+        const max = withLines ? 8 : 12;
+        
+        if(rawWords.length > max) {
+            alert(`For mange ord! Du har skrevet ${rawWords.length}. \n\nMaksgrense med linjer er 8 ord.\nMaksgrense uten linjer er 12 ord.`);
+            return;
+        }
+        activeWords = rawWords;
+
+    } else if(type === 'auto') {
+        mode = 'bilder';
+        // Auto-genererer 6 tilfeldige ord
+        activeWords = [...substantivDb].sort(()=>0.5-Math.random()).slice(0, 6);
+
+    } else if(type === 'avansert') {
+        // NY LOGIKK FOR AVANSERT UTVALG
+        if (selectedAdvancedWords.length === 0) {
+            alert("Vennligst velg minst ett bilde først.");
+            return;
+        }
+        mode = 'bilder';
+        activeWords = [...selectedAdvancedWords];
+        // Vi tømmer ikke selectedAdvancedWords her ennå, 
+        // slik at man kan gå tilbake og justere utvalget senere.
+    }
+    
+    document.getElementById('task-desc').innerText = mode === 'tekst' ? "Hvilke ord passer i boksene?" : "Skriv ordene det er bilde av.";
+    renderAll();
+    closeModals();
+}
+
+function renderAll() {
+    const out = document.getElementById('output');
+    const fas = document.getElementById('fasit-output');
+    const bankPage = document.getElementById('on-page-ordbank');
+    const bankSheet = document.getElementById('ordbank-sheet-output');
+    
+    out.innerHTML = ""; fas.innerHTML = ""; bankPage.innerHTML = ""; bankSheet.innerHTML = "";
+    
+    activeWords.forEach(item => {
+        out.innerHTML += createWordHtml(item, false);
+        fas.innerHTML += createWordHtml(item, true);
+        const wordSpan = `<span>${item.ord}</span>`; 
+        bankPage.innerHTML += wordSpan;
+        bankSheet.innerHTML += wordSpan;
+    });
+    updateVisibility();
 }
 
 function createWordHtml(item, isFasit) {
-    const word = item.ord;
-    let imgHtml = "";
-    if (currentMode === 'bilder') {
-        const charCode = Array.from(item.symbol).map(c => c.codePointAt(0).toString(16)).filter(code => code !== "fe0f").join('-');
-        const imgUrl = `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${charCode}.svg`;
-        imgHtml = `<div class="image-box"><img src="${imgUrl}"></div>`;
-    }
-    const boxes = word.split('').map(c => {
-        const cls = getBoxClass(c);
-        return `<div class="box ${cls}"><span>${isFasit ? c : ''}</span></div>`;
+    const useCustom = document.getElementById('custom-silhouettes').checked;
+    let imgHtml = mode === 'bilder' ? `<div class="image-box"><img src="${getTwemojiUrl(item)}"></div>` : "";
+    
+    const boxes = item.ord.split('').map(c => {
+        if (useCustom) {
+            // Bruk den avanserte logikken
+            const info = getBoxInfo(c);
+            return `<div class="box ${info.class}">${info.svg}<span>${isFasit ? c : ''}</span></div>`;
+        } else {
+            // Bruk den enkle standard-logikken (din nåværende)
+            const cls = "bdfhklt".includes(c.toLowerCase()) ? "stue-loft" : ("gjpqy".includes(c.toLowerCase()) ? "stue-kjeller" : "stue");
+            return `<div class="box ${cls}"><span>${isFasit ? c : ''}</span></div>`;
+        }
     }).join('');
-    return `<div class="word-unit">${imgHtml}<div class="shapes-wrapper"><div class="shapes">${boxes}</div></div></div>`;
+
+    const linesHtml = `<div class="lines-container printable-lines"><div class="l"></div><div class="l"></div><div class="l thick"></div><div class="l"></div></div>`;
+
+    return `<div class="word-unit">${imgHtml}<div class="shapes-wrapper">${boxes}</div>${isFasit ? '' : linesHtml}</div>`;
 }
 
-function run() {
-    updateTaskText();
-    const output = document.getElementById('output');
-    const fasit = document.getElementById('fasitOutput');
-    output.innerHTML = ""; fasit.innerHTML = "";
-
-    if (currentMode === 'bilder') {
-        const countInput = Math.min(document.getElementById('count').value, 6);
-        const lens = document.getElementById('chars').value.split(',').map(Number);
-        let pool = substantivDb.filter(item => lens.includes(item.ord.length));
-        pool.sort(() => 0.5 - Math.random());
-        currentActiveWords = pool.slice(0, countInput);
-    } else {
-        // Hent ord fra tekstfelt
-        let words = document.getElementById('custom-words').value.split(',')
-                    .map(w => ({ ord: w.trim() }))
-                    .filter(w => w.ord.length > 0)
-                    .slice(0, 12);
-        
-        // NYHET: Stokker rekkefølgen på silhuettene hver gang man trykker generer
-        words.sort(() => 0.5 - Math.random());
-        currentActiveWords = words;
-    }
-
-    updateBankPlacementOnly();
-
-    currentActiveWords.forEach(item => {
-        output.innerHTML += createWordHtml(item, false);
-        fasit.innerHTML += createWordHtml(item, true);
+function updateVisibility() {
+    document.getElementById('on-page-ordbank').classList.toggle('hidden', !document.getElementById('global-ordbank-page').checked);
+    document.getElementById('paper-ordbank-sheet').classList.toggle('hidden', !document.getElementById('global-ordbank-sheet').checked);
+    document.getElementById('paper-fasit').classList.toggle('hidden', !document.getElementById('global-fasit').checked);
+    
+    const showLines = document.getElementById('global-lines').checked;
+    document.querySelectorAll('.printable-lines').forEach(el => {
+        el.classList.toggle('hidden', !showLines);
     });
 }
 </script>
