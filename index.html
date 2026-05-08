@@ -256,7 +256,12 @@
 .medium-high { height: 45px; } /* Juster høyden så den passer din stil */
 
 @media print {
-    /* Nullstiller alt for å fjerne nettleserens egne marginer */
+/* Denne linjen tvinger skriveren til stående A4 */
+    @page { 
+        size: A4 portrait; 
+        margin: 0; 
+    }    
+/* Nullstiller alt for å fjerne nettleserens egne marginer */
     body, #preview { 
         background: white !important; 
         margin: 0 !important; 
