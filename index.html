@@ -65,7 +65,7 @@
 .paper { 
     background: white; 
     width: 210mm; 
-    min-height: 295mm; 
+    min-height: auto; /* Endret fra 285mm til auto */
     padding: 2mm 15mm; /* Ekstremt lav topp-padding (2mm) */
     margin: 0 auto 40px auto; 
     box-sizing: border-box; 
@@ -79,8 +79,8 @@
     display: flex; 
     justify-content: space-between; 
     align-items: flex-start; 
-    margin-top: 0 !important;
-    padding-top: 0 !important;
+    margin-top: 10 !important;
+    padding-top: 10 !important;
     margin-bottom: 10px; 
     border-bottom: 3px solid #333; 
 }
@@ -89,7 +89,7 @@
 .paper-header h1 {
     margin: 0 !important; 
     padding: 0 !important;
-    line-height: 3; /* Drar teksten oppover */
+    line-height: 1; /* Drar teksten oppover */
     font-size: 28px;
     display: block;
 }
@@ -114,7 +114,7 @@
 .lines-container {
     width: 100%;          /* Bruker all tilgjengelig plass i kolonnen */
     max-width: 300px;     /* Men stopper her så den ikke blir komisk lang */
-    margin: 10px auto;
+    margin: 12px auto;
 }
         .l { border-bottom: 1px solid #ccc; height: 18px; width: 100%; }
         .l.thick { border-bottom: 3px solid #333; }
@@ -140,7 +140,9 @@
     align-items: center;
     justify-content: flex-start;
     width: 100%;          /* Sørger for at den bruker plassen i kolonnen sin */
-    margin-bottom: 30px;  /* Litt luft ned til neste oppgave */
+    margin-bottom: 15px;  /* Litt luft ned til neste oppgave */
+    page-break-inside: avoid; /* Tvinger hele oppgaven til å holde seg samlet */
+    break-inside: avoid;
 }
         
 .image-box { 
@@ -212,7 +214,7 @@
 /* Fjerner tomrommet over overskriften */
 .modal-content h2 {
     margin-top: 0;
-    margin-bottom: 15px;
+    margin-bottom: 1px;
     font-size: 1.5rem;
 }
 
@@ -256,37 +258,64 @@
 .medium-high { height: 45px; } /* Juster høyden så den passer din stil */
 
 @media print {
-/* Denne linjen tvinger skriveren til stående A4 */
     @page { 
         size: A4 portrait; 
         margin: 0; 
     }    
-/* Nullstiller alt for å fjerne nettleserens egne marginer */
-    body, #preview { 
+
+    html, body, #preview { 
         background: white !important; 
         margin: 0 !important; 
         padding: 0 !important; 
         width: 100% !important;
+        height: auto !important;
     }
 
     #sidebar, .modal, .btn-green, .btn-red { 
         display: none !important; 
     }
 
-    .paper { 
-        /* Denne linjen er nøkkelen: -10mm drar innholdet opp på arket */
-        margin-top: -5mm !important; 
-        margin-left: auto !important;
-        margin-right: auto !important;
-        box-shadow: none !important; 
-        border: none !important;
-        padding-top: 5mm !important;
-        page-break-after: always; 
+    /* VIKTIG: Tillat at griden deles mellom to sider */
+    .grid-container {
+        display: grid !important;
+        grid-template-columns: repeat(2, 1fr) !important;
+        page-break-inside: auto !important;
+        break-inside: auto !important;
     }
 
-    /* Sikrer at skjulte elementer faktisk forblir borte */
+    .paper { 
+        margin: 0 !important; 
+        padding-top: 15mm !important; /* Sikrer luft i toppen på alle sider */
+        padding-bottom: 10mm !important; 
+        box-shadow: none !important; 
+        border: none !important;
+        height: auto !important;
+        min-height: 0 !important; 
+        page-break-inside: auto; 
+    }
+
+    .word-unit {
+        page-break-inside: avoid;
+        break-inside: avoid;
+        margin-top: 5mm !important; 
+        margin-bottom: 0 !important;
+    }
+
+    /* Drar første rad opp for å tvinge dem inn på side 1 */
+    .grid-container > .word-unit:nth-child(1),
+    .grid-container > .word-unit:nth-child(2) {
+        margin-top: 0 !important; /* Start med 0, bruk negative verdier kun hvis nødvendig */
+    }
+
+    /* Hvis du bruker ordbank, gjør den litt mer kompakt ved print */
+    #on-page-ordbank {
+        margin-bottom: 10px !important;
+        padding: 5px !important;
+    }
+
     .hidden { display: none !important; }
 }
+
     </style>
 </head>
 <body>
@@ -354,7 +383,7 @@
         </div>
 
         <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
-            <label><strong>Uten skrivelinjer (maks 14 ord):</strong></label>
+            <label><strong>Uten skrivelinjer (maks 12 ord):</strong></label>
             <textarea id="input-uten-linjer" placeholder="is, sol, ape, kake, hus, bok..." rows="4" 
                 style="width:100%; padding:10px; margin-top:5px;" 
                 oninput="document.getElementById('input-med-linjer').value=''"></textarea>
@@ -412,7 +441,7 @@
         <h1 style="margin:0; font-size:28px;">SILHUETT-ORD</h1>
         <div style="font-size: 18px; font-weight: bold;">Navn: _________________________________</div>
     </div>
-    <p id="task-desc" style="margin: 10px 0 0 0; font-style: italic; font-size: 16px; color: #444; width: 100%;">
+    <p id="task-desc" style="margin: 2px 0 0 0; font-style: italic; font-size: 16px; color: #444; width: 100%;">
         Oppgave her...
     </p>
 </div>
@@ -649,7 +678,7 @@ function generer(type) {
             autoLineSetting = true;
         } else if (inputUten.length > 0) {
             rawText = inputUten;
-            limit = 14;
+            limit = 12;
             autoLineSetting = false;
         } else {
             alert("Vennligst skriv inn noen ord.");
