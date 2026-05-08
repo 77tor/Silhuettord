@@ -299,7 +299,21 @@
 <div id="modal-enkel-tekst" class="modal">
     <div class="modal-content">
         <h2>Skriv egne ord</h2>
-        <textarea id="input-tekst" placeholder="is, sol, ape, kake..." rows="5" style="width:100%; padding:10px; margin-bottom:15px;"></textarea>
+        
+        <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
+            <label><strong>Med skrivelinjer (maks 8 ord):</strong></label>
+            <textarea id="input-med-linjer" placeholder="is, sol, ape..." rows="3" 
+                style="width:100%; padding:10px; margin-top:5px;" 
+                oninput="document.getElementById('input-uten-linjer').value=''"></textarea>
+        </div>
+
+        <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
+            <label><strong>Uten skrivelinjer (maks 16 ord):</strong></label>
+            <textarea id="input-uten-linjer" placeholder="is, sol, ape, kake, hus, bok..." rows="4" 
+                style="width:100%; padding:10px; margin-top:5px;" 
+                oninput="document.getElementById('input-med-linjer').value=''"></textarea>
+        </div>
+
         <button class="btn-green" onclick="generer('tekst')">GENERER</button>
         <button class="btn-red" onclick="closeModals()">AVBRYT</button>
     </div>
@@ -550,24 +564,46 @@ function generer(type) {
     
     if(type === 'tekst') {
         mode = 'tekst';
-        let rawWords = document.getElementById('input-tekst').value
-            .split(',')
-            .map(w => ({ord: w.trim()}))
-            .filter(w => w.ord.length > 0);
+        const inputMed = document.getElementById('input-med-linjer').value.trim();
+        const inputUten = document.getElementById('input-uten-linjer').value.trim();
         
-        const max = withLines ? 8 : 12;
-        
-        if(rawWords.length > max) {
-            alert(`For mange ord! Du har skrevet ${rawWords.length}. \n\nMaksgrense med linjer er 8 ord.\nMaksgrense uten linjer er 12 ord.`);
+        let rawText = "";
+        let limit = 16;
+        let autoLineSetting = false;
+
+        if (inputMed.length > 0) {
+            rawText = inputMed;
+            limit = 8;
+            autoLineSetting = true;
+        } else if (inputUten.length > 0) {
+            rawText = inputUten;
+            limit = 16;
+            autoLineSetting = false;
+        } else {
+            alert("Vennligst skriv inn noen ord.");
             return;
         }
+
+        // Prosesser ordene
+        let rawWords = rawText.split(',')
+            .map(w => ({ord: w.trim()}))
+            .filter(w => w.ord.length > 0);
+
+        // Sjekk grense
+        if(rawWords.length > limit) {
+            alert(`For mange ord! Du har skrevet ${rawWords.length}. Maksgrense her er ${limit} ord.`);
+            return;
+        }
+
+        // Oppdater den faktiske bryteren i sidebar så den matcher valget
+        document.getElementById('global-lines').checked = autoLineSetting;
+        document.getElementById('global-ordbank-page').checked = true;
         activeWords = rawWords;
 
     } else if(type === 'auto') {
         mode = 'bilder';
         const lengthVal = document.getElementById('auto-length').value;
         
-        // 1. Filtrer databasen basert på valg
         let filteredDb = [...substantivDb];
         
         if (lengthVal === "3") {
@@ -578,12 +614,10 @@ function generer(type) {
             filteredDb = substantivDb.filter(item => item.ord.length >= 2 && item.ord.length <= 5);
         }
 
-        // 2. Sjekk om vi fant nok ord
         if (filteredDb.length < 6) {
-            alert("Fant ikke nok ord med denne lengden i databasen. Viser de vi har.");
+            alert("Fant ikke nok ord med denne lengden i databasen.");
         }
 
-        // 3. Bland og plukk ut nøyaktig 6 ord
         activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, 6);
 
     } else if(type === 'avansert') {
@@ -595,7 +629,7 @@ function generer(type) {
         activeWords = [...selectedAdvancedWords];
     }
     
-    // Oppdater instruksjonstekst
+    // Felles avslutning for alle typer generering
     document.getElementById('task-desc').innerText = mode === 'tekst' ? "Hvilke ord passer i boksene?" : "Skriv ordene det er bilde av.";
     
     renderAll();
