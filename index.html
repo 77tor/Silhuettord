@@ -308,8 +308,12 @@
 <div id="modal-enkel-auto" class="modal">
     <div class="modal-content">
         <h2>Auto-generer med bilder</h2>
-        <label>Antall ord:</label>
-        <select id="auto-count" style="width:100%; padding:10px; margin-bottom:15px;"><option value="6">6 ord</option><option value="8">8 ord</option><option value="12">12 ord</option></select>
+        <label>Velg lengde på ordene:</label>
+        <select id="auto-length" style="width:100%; padding:10px; margin-bottom:15px;">
+            <option value="2-5">Blandet (2-5 bokstaver)</option>
+            <option value="3">Kun 3 bokstaver (f.eks. sol, tog)</option>
+            <option value="4">Kun 4 bokstaver (f.eks. løve, kake)</option>
+        </select>
         <button class="btn-green" onclick="generer('auto')">GENERER</button>
         <button class="btn-red" onclick="closeModals()">AVBRYT</button>
     </div>
@@ -561,22 +565,39 @@ function generer(type) {
 
     } else if(type === 'auto') {
         mode = 'bilder';
-        // Auto-genererer 6 tilfeldige ord
-        activeWords = [...substantivDb].sort(()=>0.5-Math.random()).slice(0, 6);
+        const lengthVal = document.getElementById('auto-length').value;
+        
+        // 1. Filtrer databasen basert på valg
+        let filteredDb = [...substantivDb];
+        
+        if (lengthVal === "3") {
+            filteredDb = substantivDb.filter(item => item.ord.length === 3);
+        } else if (lengthVal === "4") {
+            filteredDb = substantivDb.filter(item => item.ord.length === 4);
+        } else if (lengthVal === "2-5") {
+            filteredDb = substantivDb.filter(item => item.ord.length >= 2 && item.ord.length <= 5);
+        }
+
+        // 2. Sjekk om vi fant nok ord
+        if (filteredDb.length < 6) {
+            alert("Fant ikke nok ord med denne lengden i databasen. Viser de vi har.");
+        }
+
+        // 3. Bland og plukk ut nøyaktig 6 ord
+        activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, 6);
 
     } else if(type === 'avansert') {
-        // NY LOGIKK FOR AVANSERT UTVALG
         if (selectedAdvancedWords.length === 0) {
             alert("Vennligst velg minst ett bilde først.");
             return;
         }
         mode = 'bilder';
         activeWords = [...selectedAdvancedWords];
-        // Vi tømmer ikke selectedAdvancedWords her ennå, 
-        // slik at man kan gå tilbake og justere utvalget senere.
     }
     
+    // Oppdater instruksjonstekst
     document.getElementById('task-desc').innerText = mode === 'tekst' ? "Hvilke ord passer i boksene?" : "Skriv ordene det er bilde av.";
+    
     renderAll();
     closeModals();
 }
