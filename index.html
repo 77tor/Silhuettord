@@ -364,11 +364,12 @@
     <div class="modal-content">
         <h2>Auto-generer med bilder</h2>
         <label>Velg lengde på ordene:</label>
-        <select id="auto-length" style="width:100%; padding:10px; margin-bottom:15px;">
-            <option value="2-5">Blandet (2-5 bokstaver)</option>
-            <option value="3">Kun 3 bokstaver (f.eks. sol, tog)</option>
-            <option value="4">Kun 4 bokstaver (f.eks. løve, kake)</option>
-        </select>
+<select id="auto-length" style="width:100%; padding:10px; margin-bottom:15px;">
+    <option value="2-7">Blandet (2-7 bokstaver)</option>
+    <option value="2">Kun 2 bokstaver (f.eks. is, do)</option>
+    <option value="3">Kun 3 bokstaver (f.eks. sol, tog)</option>
+    <option value="4">Kun 4 bokstaver (f.eks. løve, kake)</option>
+</select>
         <button class="btn-green" onclick="generer('auto')">GENERER</button>
         <button class="btn-red" onclick="closeModals()">AVBRYT</button>
     </div>
@@ -666,22 +667,25 @@ function generer(type) {
         document.getElementById('global-ordbank-page').checked = true;
         activeWords = rawWords;
 
-    } else if(type === 'auto') {
+} else if(type === 'auto') {
         mode = 'bilder';
         const lengthVal = document.getElementById('auto-length').value;
         
         let filteredDb = [...substantivDb];
         
-        if (lengthVal === "3") {
+        if (lengthVal === "2") {
+            filteredDb = substantivDb.filter(item => item.ord.length === 2);
+        } else if (lengthVal === "3") {
             filteredDb = substantivDb.filter(item => item.ord.length === 3);
         } else if (lengthVal === "4") {
             filteredDb = substantivDb.filter(item => item.ord.length === 4);
-        } else if (lengthVal === "2-5") {
-            filteredDb = substantivDb.filter(item => item.ord.length >= 2 && item.ord.length <= 5);
+        } else if (lengthVal === "2-7") {
+            filteredDb = substantivDb.filter(item => item.ord.length >= 2 && item.ord.length <= 7);
         }
 
         if (filteredDb.length < 6) {
             alert("Fant ikke nok ord med denne lengden i databasen.");
+            // Vi stopper ikke her, men det er greit å gi beskjed
         }
 
         activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, 6);
