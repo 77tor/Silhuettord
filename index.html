@@ -194,10 +194,49 @@
             background: rgba(0,0,0,0.85); z-index: 2000;
             display: none; justify-content: center; align-items: center; backdrop-filter: blur(4px);
         }
-        .modal-content { background: white; color: #333; padding: 35px; border-radius: 15px; width: 90%; max-width: 550px; }
+.modal-content { 
+    background: white; 
+    color: #333; 
+    padding: 15px 25px 25px 25px; /* Mindre padding i toppen (15px) */
+    border-radius: 15px; 
+    width: 95%; 
+    max-width: 800px; 
+    max-height: 85vh; 
+    overflow-y: auto; 
+    box-shadow: 0 10px 30px rgba(0,0,0,0.3);
+    position: relative;
+}
 
-        .btn-green { background: #27ae60; color: white; border: none; padding: 12px; border-radius: 6px; cursor: pointer; width: 100%; font-weight: bold; margin-bottom: 10px; }
-        .btn-red { background: #e74c3c; color: white; border: none; padding: 10px; border-radius: 6px; cursor: pointer; width: 100%; }
+/* Fjerner tomrommet over overskriften */
+.modal-content h2 {
+    margin-top: 0;
+    margin-bottom: 15px;
+    font-size: 1.5rem;
+}
+
+.btn-green { 
+    background: #27ae60; 
+    color: white; 
+    border: none; 
+    padding: 12px 25px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold; 
+    flex: 1; /* Gjør at knappen fyller tilgjengelig plass */
+    max-width: 250px; 
+}
+
+.btn-red { 
+    background: #e74c3c; 
+    color: white; 
+    border: none; 
+    padding: 12px 25px; 
+    border-radius: 6px; 
+    cursor: pointer; 
+    font-weight: bold;
+    flex: 1; /* Gjør at knappen fyller tilgjengelig plass */
+    max-width: 250px;
+}
         .hidden { display: none !important; }
 
 /* Spesialstørrelser for bokstaver */
@@ -334,11 +373,11 @@
 </div>
 
 <div id="modal-avansert" class="modal">
-    <div class="modal-content" style="max-width: 800px;">
-        <h2>Avansert utvalg</h2>
+    <div class="modal-content" style="max-width: 800px; padding: 15px 25px; max-height: 90vh; display: flex; flex-direction: column;">
+        <h2 style="margin-top: 0; margin-bottom: 10px;">Avansert utvalg</h2>
         
-        <div style="background: #f8f9fa; padding: 15px; border-radius: 8px; margin-bottom: 15px; border: 1px dashed #ccc;">
-            <p style="margin: 0 0 10px 0; font-weight: bold;">Legg til eget bilde fra PC:</p>
+        <div style="background: #f8f9fa; padding: 12px; border-radius: 8px; margin-bottom: 10px; border: 1px dashed #ccc; flex-shrink: 0;">
+            <p style="margin: 0 0 8px 0; font-weight: bold; font-size: 0.9rem;">Legg til eget ord med bilde fra PC:</p>
             <div style="display: flex; gap: 10px;">
                 <input type="text" id="custom-word-input" placeholder="Skriv ordet her..." style="flex: 1; padding: 8px; border: 1px solid #ddd; border-radius: 4px;">
                 <input type="file" id="custom-image-input" accept="image/*" style="display: none;">
@@ -347,12 +386,13 @@
             <small id="file-name-display" style="display: block; margin-top: 5px; color: #666;"></small>
         </div>
 
-        <div id="avansert-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; max-height: 300px; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 15px;"></div>
+        <div id="avansert-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; flex-grow: 1; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 15px; min-height: 200px; max-height: 40vh;">
+            </div>
         
-        <div style="display: flex; flex-direction: column; gap: 5px;">
-            <button class="btn-green" onclick="generer('avansert')">GENERER VALGTE</button>
-            <button class="btn-red" style="background:#7f8c8d;" onclick="nullstillAvansertValg()">NULLSTILL VALG</button>
-            <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+        <div style="display: flex; flex-direction: row; gap: 10px; justify-content: center; flex-shrink: 0; padding-top: 5px;">
+            <button class="btn-green" style="flex: 1; margin: 0;" onclick="generer('avansert')">GENERER VALGTE</button>
+            <button class="btn-red" style="flex: 1; margin: 0; background:#7f8c8d;" onclick="nullstillAvansertValg()">NULLSTILL VALG</button>
+            <button class="btn-red" style="flex: 1; margin: 0;" onclick="closeModals()">AVBRYT</button>
         </div>
     </div>
 </div>
