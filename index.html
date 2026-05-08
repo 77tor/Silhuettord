@@ -349,7 +349,7 @@
         </div>
 
         <div style="background: #f9f9f9; padding: 10px; border-radius: 8px; margin-bottom: 15px; border: 1px solid #ddd;">
-            <label><strong>Uten skrivelinjer (maks 16 ord):</strong></label>
+            <label><strong>Uten skrivelinjer (maks 14 ord):</strong></label>
             <textarea id="input-uten-linjer" placeholder="is, sol, ape, kake, hus, bok..." rows="4" 
                 style="width:100%; padding:10px; margin-top:5px;" 
                 oninput="document.getElementById('input-med-linjer').value=''"></textarea>
@@ -644,7 +644,7 @@ function generer(type) {
             autoLineSetting = true;
         } else if (inputUten.length > 0) {
             rawText = inputUten;
-            limit = 16;
+            limit = 14;
             autoLineSetting = false;
         } else {
             alert("Vennligst skriv inn noen ord.");
