@@ -275,17 +275,18 @@
         display: none !important; 
     }
 
-    /* VIKTIG: Tillat at griden deles mellom to sider */
+    /* Tvinger griden til å fylle opp side 1 før den brekker */
     .grid-container {
         display: grid !important;
         grid-template-columns: repeat(2, 1fr) !important;
         page-break-inside: auto !important;
         break-inside: auto !important;
+        gap: 5px 40px !important; /* Litt mindre gap vertikalt */
     }
 
     .paper { 
         margin: 0 !important; 
-        padding-top: 15mm !important; /* Sikrer luft i toppen på alle sider */
+        padding-top: 10mm !important; /* Litt mindre padding for å gi plass til linjer */
         padding-bottom: 10mm !important; 
         box-shadow: none !important; 
         border: none !important;
@@ -294,23 +295,27 @@
         page-break-inside: auto; 
     }
 
-    .word-unit {
-        page-break-inside: avoid;
-        break-inside: avoid;
-        margin-top: 5mm !important; 
-        margin-bottom: 0 !important;
+    /* Kompakt ordbank er kritisk når linjer er valgt */
+    #on-page-ordbank {
+        margin-bottom: 5mm !important; /* Redusert for å spare plass */
+        padding: 5px !important;
+        font-size: 20px !important; /* Litt mindre tekst i ordbank sparer høyde */
     }
 
-    /* Drar første rad opp for å tvinge dem inn på side 1 */
+    .paper-header {
+        margin-bottom: 5px !important;
+    }
+
+    .word-unit {
+        page-break-inside: avoid !important;
+        break-inside: avoid !important;
+        margin-top: 3mm !important; /* Redusert fra 5mm for å unngå hopp */
+    }
+
+    /* Drar første rad aktivt oppover for å tvinge dem inn på side 1 */
     .grid-container > .word-unit:nth-child(1),
     .grid-container > .word-unit:nth-child(2) {
-        margin-top: 0 !important; /* Start med 0, bruk negative verdier kun hvis nødvendig */
-    }
-
-    /* Hvis du bruker ordbank, gjør den litt mer kompakt ved print */
-    #on-page-ordbank {
-        margin-bottom: 10px !important;
-        padding: 5px !important;
+        margin-top: -2mm !important; 
     }
 
     .hidden { display: none !important; }
