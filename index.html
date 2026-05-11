@@ -5,6 +5,8 @@
     <title>Silhuett-ord</title>
     <link rel="icon" type="image/png" href="silhuett-ord_02.png">
     <link rel="apple-touch-icon" href="silhuett-ord_02.png">
+
+
     <style>
         @font-face {
             font-family: 'Trykkskrift-1';
@@ -305,6 +307,14 @@
     .paper-header {
         margin-bottom: 5px !important;
     }
+/* Sørger for at fasit-side og ordbank-side alltid starter på ny side */
+    .paper + .paper, 
+    .fasit-page, 
+    #fasit-content {
+        page-break-before: always !important;
+        margin-top: 0 !important;
+        padding-top: 15mm !important; /* Gir god marg på den nye siden */
+    }
 
     .word-unit {
         page-break-inside: avoid !important;
@@ -402,15 +412,25 @@
 <div id="modal-enkel-auto" class="modal">
     <div class="modal-content">
         <h2>Auto-generer med bilder</h2>
+        
         <label>Velg lengde på ordene:</label>
-<select id="auto-length" style="width:100%; padding:10px; margin-bottom:15px;">
-    <option value="2-7">Blandet (2-7 bokstaver)</option>
-    <option value="2">Kun 2 bokstaver (f.eks. is, do)</option>
-    <option value="3">Kun 3 bokstaver (f.eks. sol, tog)</option>
-    <option value="4">Kun 4 bokstaver (f.eks. løve, kake)</option>
-</select>
-        <button class="btn-green" onclick="generer('auto')">GENERER</button>
-        <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+        <select id="auto-length" style="width:100%; padding:10px; margin-bottom:15px;">
+            <option value="2-7">Blandet (2-7 bokstaver)</option>
+            <option value="2">Kun 2 bokstaver (f.eks. is, do)</option>
+            <option value="3">Kun 3 bokstaver (f.eks. sol, tog)</option>
+            <option value="4">Kun 4 bokstaver (f.eks. løve, kake)</option>
+        </select>
+
+        <label>Antall bilder per ark:</label>
+        <select id="auto-count" style="width:100%; padding:10px; margin-bottom:15px;">
+            <option value="6">6 ord (anbefalt med skrivelinjer)</option>
+            <option value="10">10 ord (kun silhuetter, ikke plass til linjer)</option>
+        </select>
+        
+        <div style="display: flex; gap: 10px; margin-top: 10px;">
+            <button class="btn-green" onclick="generer('auto')">GENERER</button>
+            <button class="btn-red" onclick="closeModals()">AVBRYT</button>
+        </div>
     </div>
 </div>
 
@@ -429,8 +449,13 @@
         </div>
 
         <div id="avansert-grid" style="display: grid; grid-template-columns: repeat(auto-fill, minmax(90px, 1fr)); gap: 10px; flex-grow: 1; overflow-y: auto; border: 1px solid #eee; padding: 10px; margin-bottom: 15px; min-height: 200px; max-height: 40vh;">
-            </div>
-        
+        </div>
+
+<div id="advanced-page-counter" style="margin: 10px 0; padding: 8px 12px; background: #2c3e50; color: white; border-radius: 8px; display: flex; justify-content: space-between; align-items: center; font-size: 0.85em; border: 1px solid #34495e; gap: 15px;">
+    <div>Valgte: <strong id="count-total">0</strong></div>
+    <div id="est-uten">📄 Uten linjer: <span id="val-uten" style="font-weight: bold;">1 side</span></div>
+    <div id="est-med">📝 Med linjer: <span id="val-med" style="font-weight: bold;">1 side</span></div>
+</div>
         <div style="display: flex; flex-direction: row; gap: 10px; justify-content: center; flex-shrink: 0; padding-top: 5px;">
             <button class="btn-green" style="flex: 1; margin: 0;" onclick="generer('avansert')">GENERER VALGTE</button>
             <button class="btn-red" style="flex: 1; margin: 0; background:#7f8c8d;" onclick="nullstillAvansertValg()">NULLSTILL VALG</button>
@@ -528,6 +553,7 @@ function openModal(id) {
     document.getElementById(id).style.display = 'flex'; 
     if(id === 'modal-avansert') {
         renderAvansert(); 
+        oppdaterSideEstimat(); // Oppdaterer tallene med en gang modalen åpnes
     }
 }
 
@@ -567,6 +593,7 @@ document.getElementById('custom-image-input')?.addEventListener('change', functi
         
         // Oppdater rutenettet
         renderAvansert();
+        oppdaterSideEstimat(); // <--- LEGG TIL DENNE HER
     };
     reader.readAsDataURL(file);
 });
@@ -604,8 +631,14 @@ function getBoxInfo(c) {
 }
 // Ny funksjon for å tømme utvalget manuelt inne i modalen
 function nullstillAvansertValg() {
+    // 1. Tøm listen over valgte ord
     selectedAdvancedWords = [];
+    
+    // 2. Tegn rutenettet på nytt (slik at blå rammer forsvinner)
     renderAvansert();
+    
+    // 3. Oppdater telleren og estimatene (slik at de nullstilles)
+    oppdaterSideEstimat();
 }
 
 function closeModals() { 
@@ -635,6 +668,7 @@ function getTwemojiUrl(item) {
     return `https://cdn.jsdelivr.net/gh/twitter/twemoji@latest/assets/svg/${charCode}.svg`;
 }
 
+
 function renderAvansert() {
     const grid = document.getElementById('avansert-grid');
     grid.innerHTML = "";
@@ -643,7 +677,6 @@ function renderAvansert() {
         const isSelected = selectedAdvancedWords.some(w => w.ord === item.ord);
         const div = document.createElement('div');
         
-        // Legger til en blå ramme og lysere bakgrunn hvis bildet er valgt
         div.style.cssText = `
             border: ${isSelected ? '3px solid #3498db' : '1px solid #eee'}; 
             background: ${isSelected ? '#ebf5fb' : 'white'};
@@ -655,11 +688,12 @@ function renderAvansert() {
         div.onclick = () => {
             const index = selectedAdvancedWords.findIndex(w => w.ord === item.ord);
             if (index > -1) {
-                selectedAdvancedWords.splice(index, 1); // Fjern hvis allerede valgt
+                selectedAdvancedWords.splice(index, 1); 
             } else {
-                selectedAdvancedWords.push(item); // Legg til hvis ikke valgt
+                selectedAdvancedWords.push(item); 
             }
-            renderAvansert(); // Tegn på nytt for å vise markering
+            renderAvansert(); 
+            oppdaterSideEstimat(); // <--- LEGG TIL DENNE HER
         };
         grid.appendChild(div);
     });
@@ -690,25 +724,30 @@ function generer(type) {
             return;
         }
 
-        // Prosesser ordene
         let rawWords = rawText.split(',')
             .map(w => ({ord: w.trim()}))
             .filter(w => w.ord.length > 0);
 
-        // Sjekk grense
         if(rawWords.length > limit) {
             alert(`For mange ord! Du har skrevet ${rawWords.length}. Maksgrense her er ${limit} ord.`);
             return;
         }
 
-        // Oppdater den faktiske bryteren i sidebar så den matcher valget
         document.getElementById('global-lines').checked = autoLineSetting;
         document.getElementById('global-ordbank-page').checked = true;
         activeWords = rawWords;
 
-} else if(type === 'auto') {
+    } else if(type === 'auto') {
         mode = 'bilder';
         const lengthVal = document.getElementById('auto-length').value;
+        
+        // --- NY LOGIKK FOR ANTALL OG LINJER ---
+        const countVal = parseInt(document.getElementById('auto-count').value); 
+        
+        // Setter skrivelinjer PÅ hvis 6 ord, AV hvis 10 ord
+        const autoLineSetting = (countVal === 6);
+        document.getElementById('global-lines').checked = autoLineSetting;
+        // --------------------------------------
         
         let filteredDb = [...substantivDb];
         
@@ -722,12 +761,12 @@ function generer(type) {
             filteredDb = substantivDb.filter(item => item.ord.length >= 2 && item.ord.length <= 7);
         }
 
-        if (filteredDb.length < 6) {
-            alert("Fant ikke nok ord med denne lengden i databasen.");
-            // Vi stopper ikke her, men det er greit å gi beskjed
+        if (filteredDb.length < countVal) {
+            alert(`Fant ikke nok ord (${filteredDb.length}) med denne lengden i databasen.`);
         }
 
-        activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, 6);
+        // Bruker 'countVal' istedenfor tallet 6 i slice
+        activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, countVal);
 
     } else if(type === 'avansert') {
         if (selectedAdvancedWords.length === 0) {
@@ -738,10 +777,8 @@ function generer(type) {
         activeWords = [...selectedAdvancedWords];
     }
     
-// Oppdater instruksjonstekst basert på modus og skrivelinjer
     let beskrivelse = mode === 'tekst' ? "Hvilke ord passer i boksene?" : "Skriv ordene det er bilde av.";
     
-    // Hvis skrivelinjer er huket av (enten manuelt eller auto), legg til ekstra tekst
     if (document.getElementById('global-lines').checked) {
         beskrivelse += " Skriv ordene også riktig inn i linjesystemene.";
     }
@@ -768,6 +805,32 @@ function renderAll() {
         bankSheet.innerHTML += wordSpan;
     });
     updateVisibility();
+}
+
+
+function oppdaterSideEstimat() {
+    const totaltValgte = (typeof selectedAdvancedWords !== 'undefined') ? selectedAdvancedWords.length : 0;
+    
+    const countElem = document.getElementById('count-total');
+    const valUtenElem = document.getElementById('val-uten');
+    const valMedElem = document.getElementById('val-med');
+
+    if (!countElem || !valUtenElem || !valMedElem) return;
+
+    // Oppdater antall
+    countElem.innerText = totaltValgte;
+
+    // Beregn sider uten skrivelinjer (10 per side)
+    const siderUten = Math.ceil(totaltValgte / 10) || 1;
+    valUtenElem.innerText = `${siderUten} side${siderUten > 1 ? 'r' : ''}`;
+
+    // Beregn sider med skrivelinjer (6 per side)
+    const siderMed = Math.ceil(totaltValgte / 6) || 1;
+    valMedElem.innerText = `${siderMed} side${siderMed > 1 ? 'r' : ''}`;
+
+    // Fargekode for å markere at det bikker over til flere sider
+    valMedElem.style.color = siderMed > 1 ? '#ffcc00' : '#ffffff';
+    valUtenElem.style.color = siderUten > 1 ? '#ffcc00' : '#ffffff';
 }
 
 function createWordHtml(item, isFasit) {
