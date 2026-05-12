@@ -259,6 +259,76 @@
 /* Justering for i og å */
 .medium-high { height: 45px; } /* Juster høyden så den passer din stil */
 
+
+/* Denne manglet for at menyen skal kunne åpnes */
+.dropdown-menu.show {
+    display: block !important;
+}
+
+/* HAMBURGER MENY-KNAPP */
+.menu-container {
+    position: relative;
+    margin-bottom: 10px;
+}
+
+.hamburger {
+    display: flex;
+    flex-direction: column;
+    gap: 4px;
+    cursor: pointer;
+    width: 20px;
+    padding: 5px;
+}
+
+.hamburger span {
+    display: block;
+    width: 100%;
+    height: 2px;
+    background-color: white;
+    border-radius: 1px;
+    transition: 0.3s;
+}
+
+/* SELVE MENYEN SOM KOMMER FREM */
+.dropdown-menu {
+    display: none;
+    position: absolute;
+    top: 25px;
+    left: 0;
+    background-color: #2c3e50;
+    border: 1px solid rgba(255,255,255,0.1);
+    border-radius: 6px;
+    width: 200px;
+    z-index: 100;
+    box-shadow: 5px 5px 15px rgba(0,0,0,0.5);
+}
+
+.menu-icon {
+    width: 20px;          /* Størrelsen på bildet */
+    height: 20px;
+    margin-right: 10px;   /* Avstand fra bilde til tekst */
+    vertical-align: middle; /* Sentrerer bildet i forhold til teksten */
+    object-fit: contain;  /* Sørger for at bildet ikke blir strukket */
+    border-radius: 3px;   /* Valgfritt: runder av hjørnene på bildene litt */
+}
+.dropdown-menu a {
+    display: block;
+    color: white;
+    padding: 12px 15px;
+    text-decoration: none;
+    font-size: 0.9rem;
+    border-bottom: 1px solid rgba(255,255,255,0.05);
+}
+
+.dropdown-menu a:hover {
+    background-color: #34495e;
+}
+
+/* Viser menyen når man legger til klassen "show" via JS */
+.dropdown-menu.show {
+    display: block;
+}
+
 @media print {
     @page { 
         size: A4 portrait; 
@@ -334,10 +404,31 @@
     </style>
 </head>
 <body>
-
 <div id="sidebar">
-    <img src="silhuett-ord_03.png" class="sidebar-logo">
-    
+    <div class="sidebar-header" style="display: flex; align-items: center; margin-bottom: 20px;">
+        
+        <div class="menu-container" style="margin-bottom: 0; margin-right: 15px;">
+            <div class="hamburger" onclick="toggleMenu()">
+                <span></span>
+                <span></span>
+                <span></span>
+            </div>
+            
+    <div id="myDropdown" class="dropdown-menu">
+    <a href="https://77tor.github.io/gitter/" target="_blank">
+        <img src="gitter_02.png" class="menu-icon"> Gitter-ord
+    </a>
+    <a href="https://77tor.github.io/Silhuettord/" target="_blank">
+        <img src="silhuett-ord_05.png" class="menu-icon"> Silhuett-ord
+    </a>
+    <a href="https://77tor.github.io/ord-sok/" target="_blank">
+        <img src="ord-sok.png" class="menu-icon"> Ordsøk
+    </a>
+            </div>
+        </div>
+<h2 style="margin: 0; flex-grow: 1; text-align: center;">Silhuett-ord</h2>
+    </div>
+
     <button class="nav-btn" onclick="openModal('modal-enkel-tekst')">1. ENKEL TEKST<br><small>Egne ord, ingen bilder</small></button>
     <button class="nav-btn" onclick="openModal('modal-enkel-auto')">2. ENKEL BILDER<br><small>Auto-generert fra liste</small></button>
     <button class="nav-btn" onclick="openModal('modal-avansert')">3. AVANSERT<br><small>Egne bilder & utvalg</small></button>
@@ -385,6 +476,7 @@
         <button class="btn-red" style="background:#7f8c8d" onclick="location.reload()">NULLSTILL</button>
     </div>
 </div>
+
 
 <div id="modal-enkel-tekst" class="modal">
     <div class="modal-content">
@@ -711,15 +803,16 @@ function generer(type) {
 
     const withLines = document.getElementById('global-lines').checked;
     
+    // Vi deklarerer disse her én gang
+    let rawText = "";
+    let limit = 16;
+    let autoLineSetting = false; 
+
     if(type === 'tekst') {
         mode = 'tekst';
         const inputMed = document.getElementById('input-med-linjer').value.trim();
         const inputUten = document.getElementById('input-uten-linjer').value.trim();
         
-        let rawText = "";
-        let limit = 16;
-        let autoLineSetting = false;
-
         if (inputMed.length > 0) {
             rawText = inputMed;
             limit = 8;
@@ -749,14 +842,11 @@ function generer(type) {
     } else if(type === 'auto') {
         mode = 'bilder';
         const lengthVal = document.getElementById('auto-length').value;
-        
-        // --- NY LOGIKK FOR ANTALL OG LINJER ---
         const countVal = parseInt(document.getElementById('auto-count').value); 
         
-        // Setter skrivelinjer PÅ hvis 6 ord, AV hvis 10 ord
-        const autoLineSetting = (countVal === 6);
+        // --- FIKSEN ER HER: Fjernet "const" for å unngå kollisjon ---
+        autoLineSetting = (countVal === 6);
         document.getElementById('global-lines').checked = autoLineSetting;
-        // --------------------------------------
         
         let filteredDb = [...substantivDb];
         
@@ -774,7 +864,6 @@ function generer(type) {
             alert(`Fant ikke nok ord (${filteredDb.length}) med denne lengden i databasen.`);
         }
 
-        // Bruker 'countVal' istedenfor tallet 6 i slice
         activeWords = filteredDb.sort(() => 0.5 - Math.random()).slice(0, countVal);
 
     } else if(type === 'avansert') {
@@ -788,6 +877,7 @@ function generer(type) {
     
     let beskrivelse = mode === 'tekst' ? "Hvilke ord passer i boksene?" : "Skriv ordene det er bilde av.";
     
+    // Bruker den oppdaterte sjekkboksen for å bygge beskrivelsen
     if (document.getElementById('global-lines').checked) {
         beskrivelse += " Skriv ordene også riktig inn i linjesystemene.";
     }
@@ -886,6 +976,23 @@ function updateVisibility() {
         taskDesc.innerText = renTekst + ekstraTekst;
     } else {
         taskDesc.innerText = renTekst;
+    }
+}
+
+function toggleMenu() {
+    document.getElementById("myDropdown").classList.toggle("show");
+}
+
+// Lukker menyen hvis man klikker utenfor den
+window.onclick = function(event) {
+    if (!event.target.closest('.menu-container')) {
+        var dropdowns = document.getElementsByClassName("dropdown-menu");
+        for (var i = 0; i < dropdowns.length; i++) {
+            var openDropdown = dropdowns[i];
+            if (openDropdown.classList.contains('show')) {
+                openDropdown.classList.remove('show');
+            }
+        }
     }
 }
 </script>
