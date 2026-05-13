@@ -36,15 +36,15 @@
         
         .nav-btn { 
             background: rgba(255,255,255,0.1); color: white; border: 1px solid rgba(255,255,255,0.2); 
-            padding: 15px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; 
+            padding: 10px; margin-bottom: 12px; border-radius: 10px; cursor: pointer; 
             text-align: left; font-weight: bold; width: 100%; transition: all 0.2s;
         }
         .nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
 
-        .sidebar-section { margin-top: 30px; padding-top: 20px; border-top: 1px solid rgba(255,255,255,0.1); }
+
         .toggle-container {
             display: flex; align-items: center; justify-content: space-between;
-            background: rgba(0,0,0,0.2); padding: 10px 12px; border-radius: 8px; margin-bottom: 8px;
+            background: rgba(0,0,0,0.2); padding: 8px 12px; border-radius: 8px; margin-bottom: 8px;
             font-size: 0.9rem;
         }
         .switch { position: relative; display: inline-block; width: 40px; height: 20px; flex-shrink: 0; }
@@ -224,7 +224,7 @@
     background: #27ae60; 
     color: white; 
     border: none; 
-    padding: 12px 25px; 
+    padding: 10px 25px; 
     border-radius: 6px; 
     cursor: pointer; 
     font-weight: bold; 
@@ -233,10 +233,10 @@
 }
 
 .btn-red { 
-    background: #e74c3c; 
+    background: #ff7675; 
     color: white; 
     border: none; 
-    padding: 12px 25px; 
+    padding: 10px 25px; 
     border-radius: 6px; 
     cursor: pointer; 
     font-weight: bold;
@@ -471,10 +471,10 @@
 </div>
     </div>
 
-    <div style="margin-top: 20px;">
-        <button class="btn-green" onclick="window.print()">SKRIV UT (PDF)</button>
-        <button class="btn-red" style="background:#7f8c8d" onclick="location.reload()">NULLSTILL</button>
-    </div>
+<div style="margin-top: 20px; display: flex; gap: 10px; width: 100%; max-width: 510px;">
+    <button class="btn-green" onclick="window.print()">SKRIV UT (PDF)</button>
+    <button class="btn-red" onclick="location.reload()">NULLSTILL</button>
+</div>
 </div>
 
 
