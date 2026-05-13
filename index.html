@@ -329,6 +329,13 @@
     display: block;
 }
 
+.menu-item-disabled {
+    opacity: 0.4;            /* Gjør alt 60% gjennomsiktig */
+    filter: grayscale(100%); /* Gjør bildet helt grått */
+    pointer-events: none;    /* Gjør at man ikke kan klikke på lenken */
+    cursor: default;         /* Viser vanlig pil i stedet for pekefinger */
+}
+
 @media print {
     @page { 
         size: A4 portrait; 
@@ -418,12 +425,12 @@
     <a href="https://77tor.github.io/gitter/" target="_self">
         <img src="gitter_02.png" class="menu-icon"> Gitter-ord
     </a>
-    <a href="https://77tor.github.io/Silhuettord/" target="_self">
-        <img src="silhuett-ord_05.png" class="menu-icon"> Silhuett-ord
-    </a>
     <a href="https://77tor.github.io/ord-sok/" target="_self">
         <img src="ord-sok.png" class="menu-icon"> Ordsøk
     </a>
+<a href="https://77tor.github.io/Silhuettord/" target="_self" class="menu-item-disabled">
+    <img src="silhuett-ord_05.png" class="menu-icon"> Silhuett-ord
+</a>
             </div>
         </div>
 <h3 style="margin: 0; flex-grow: 1; text-align: center;">SILHUETT-ORD</h3>
