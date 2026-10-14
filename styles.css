@@ -1,0 +1,149 @@
+/* =========================================================
+   SILHUETT-ORD – STILARK
+   Organisert etter tema. Én regel per linje for mindre scrolling.
+   ========================================================= */
+
+/* 1. SKRIFT OG VARIABLER */
+@font-face { font-family: 'Trykkskrift-1'; src: url('Trykkskrift-1.otf') format('opentype'), url('Trykkskrift-1.ttf') format('truetype'); font-weight: normal; font-style: normal; }
+:root { --unit-size: 42px; --stue-height: 42px; --total-height: 70px; --diff: calc(var(--total-height) - var(--stue-height)); --primary: #243447; --accent: #3498db; }
+
+/* 2. GRUNNLEGGENDE LAYOUT */
+* { box-sizing: border-box; }
+body { display: flex; margin: 0; color: #333; background: #e0e4e8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+.hidden { display: none !important; }
+
+/* 3. VENSTREMENY */
+#sidebar { position: fixed; z-index: 100; width: 350px; height: 100vh; padding: 15px; overflow-y: auto; color: #fff; background: var(--primary); box-shadow: 2px 0 10px rgba(0,0,0,.3); }
+.sidebar-logo { display: block; width: 140px; margin: 0 auto 25px; }
+.nav-btn { width: 100%; padding: 10px; margin-bottom: 12px; color: #fff; text-align: left; font-weight: bold; background: rgba(255,255,255,.1); border: 1px solid rgba(255,255,255,.2); border-radius: 10px; cursor: pointer; transition: all .2s; }
+.nav-btn:hover { background: var(--accent); border-color: var(--accent); transform: translateY(-2px); }
+.toggle-container { display: flex; align-items: center; justify-content: space-between; gap: 10px; padding: 8px 12px; margin-bottom: 8px; font-size: .9rem; background: rgba(0,0,0,.2); border-radius: 8px; }
+.switch { position: relative; display: inline-block; flex-shrink: 0; width: 40px; height: 20px; }
+.switch input { width: 0; height: 0; opacity: 0; }
+.slider { position: absolute; inset: 0; background: #ccc; border-radius: 20px; cursor: pointer; transition: .4s; }
+.slider:before { position: absolute; bottom: 3px; left: 3px; width: 14px; height: 14px; content: ""; background: #fff; border-radius: 50%; transition: .4s; }
+.switch input:checked + .slider { background: #27ae60; }
+.switch input:checked + .slider:before { transform: translateX(20px); }
+
+/* 4. FORHÅNDSVISNING OG A4-ARK */
+#preview { display: flex; flex-direction: column; align-items: center; width: calc(100% - 350px); min-height: 100vh; margin-left: 350px; padding: 20px 0; overflow-x: hidden; background: #e0e4e8; }
+.paper { position: relative; display: block; width: 210mm; height: 297mm; padding: 15mm; margin: 10px auto -70mm; overflow: hidden; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,.15); transform: scale(.75); transform-origin: top center; }
+.paper-header { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 0 !important; margin-bottom: 15px; padding-top: 0 !important; border-bottom: 3px solid #333; }
+.paper-header h1 { display: block; margin: 0 !important; padding: 0 !important; font-size: 28px; line-height: 1; }
+.paper-header p#task-desc { margin-top: 5px; }
+.info-box { min-width: 200px; padding: 12px; margin-top: 15px; margin-right: 0; font-size: 14px; border: 2px solid #333; border-radius: 4px; align-self: flex-start; }
+
+/* 5. ORDBANK */
+#on-page-ordbank { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 12px; margin-bottom: 30px; font-family: 'Trykkskrift-1'; font-size: 24px; border: 2px solid #333; border-radius: 8px; }
+#ordbank-sheet-output { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; font-family: 'Trykkskrift-1'; font-size: 30px; border: 2px solid #eee; }
+
+/* 6. OPPGAVER OG SILHUETTER */
+.grid-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 25px 30px; width: 100%; min-width: 0; }
+.word-unit { display: flex; flex-direction: column; align-items: flex-start; justify-content: flex-start; width: 100%; min-width: 0; max-width: 100%; margin-bottom: 15px; box-sizing: border-box; break-inside: avoid; page-break-inside: avoid; }
+.image-box { display: flex; align-items: center; justify-content: center; width: 100%; height: 75px; max-width: 100%; margin-bottom: 10px; }
+.image-box img { width: 75px; height: 75px; object-fit: contain; }
+.shapes-wrapper { display: flex; flex: 0 0 auto; align-items: flex-end; justify-content: flex-start; width: max-content; max-width: none; transform: scaleX(var(--word-scale, 1)); transform-origin: left top; }
+.box { position: relative; display: flex; justify-content: center; flex: 0 0 auto; width: var(--unit-size); margin-left: -2.5px; font-family: 'Trykkskrift-1'; font-size: 32px; background: #fff; border: 2.5px solid #000; box-sizing: border-box; }
+.stue { height: var(--stue-height); align-items: flex-end; }
+.stue-loft { height: var(--total-height); align-items: flex-end; }
+.stue-kjeller { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: var(--total-height); margin-bottom: calc(var(--diff) * -1); }
+.stue-kjeller::before { display: block; min-height: var(--stue-height); margin-bottom: calc(var(--stue-height) * -1); content: ""; }
+.box span { position: absolute; bottom: 3px !important; left: 0; z-index: 5; width: 100%; padding: 0 !important; margin: 0 !important; text-align: center; line-height: 1; }
+.stue-kjeller span { bottom: 28px !important; }
+.lines-container { width: 100%; max-width: 300px; margin: 12px 0; }
+.l { width: 100%; height: 18px; border-bottom: 1px solid #ccc; }
+.l.thick { border-bottom: 3px solid #333; }
+
+/* 7. TILPASSEDE SILHUETTER */
+.w-v-narrow { width: 22px !important; }
+.w-narrow { width: 32px !important; }
+.w-normal { width: var(--unit-size, 30px); }
+.special-box { background: transparent !important; border: none !important; }
+.special-box svg { position: absolute; top: 0; left: 0; z-index: 1; width: 100%; height: 100%; }
+.medium-high { height: 45px; }
+
+/* 8. MODALER OG SKJEMAKNAPPER */
+.modal { position: fixed; top: 0; left: 0; z-index: 2000; display: none; align-items: center; justify-content: center; width: 100%; height: 100%; background: rgba(0,0,0,.85); backdrop-filter: blur(4px); }
+.modal-content { position: relative; width: 95%; max-width: 800px; max-height: 85vh; padding: 15px 25px 25px; overflow-y: auto; color: #333; background: #fff; border-radius: 15px; box-shadow: 0 10px 30px rgba(0,0,0,.3); }
+.modal-content h2 { margin-top: 0; margin-bottom: 1px; font-size: 1.5rem; }
+.btn-green, .btn-red { flex: 1; max-width: 250px; padding: 10px 25px; color: #fff; font-weight: bold; border: 0; border-radius: 6px; cursor: pointer; }
+.btn-green { background: #27ae60; }
+.btn-red { background: #ff7675; }
+.btn-green:hover, .btn-red:hover { filter: brightness(1.2); transform: translateY(-1px); box-shadow: 0 4px 8px rgba(0,0,0,.1); }
+
+/* 9. NEDTREKKSMENY */
+.menu-container { position: relative; margin-bottom: 10px; }
+.hamburger { display: flex; flex-direction: column; gap: 4px; width: 20px; padding: 5px; cursor: pointer; }
+.hamburger span { display: block; width: 100%; height: 2px; background: #fff; border-radius: 1px; transition: .3s; }
+.dropdown-menu { position: absolute; top: 25px; left: 0; z-index: 100; display: none; width: 200px; background: #2c3e50; border: 1px solid rgba(255,255,255,.1); border-radius: 6px; box-shadow: 5px 5px 15px rgba(0,0,0,.5); }
+.dropdown-menu.show { display: block !important; }
+.menu-icon { width: 20px; height: 20px; margin-right: 10px; vertical-align: middle; object-fit: contain; border-radius: 3px; }
+.dropdown-menu a { display: block; padding: 12px 15px; color: #fff; font-size: .9rem; text-decoration: none; border-bottom: 1px solid rgba(255,255,255,.05); }
+.dropdown-menu a:hover { background: #34495e; }
+.menu-item-disabled { opacity: .4; filter: grayscale(100%); pointer-events: none; cursor: default; }
+
+
+/* =========================================================
+   10. UTSKRIFT
+   ========================================================= */
+
+@media print {
+    @page { size: A4 portrait; margin: 0; }
+    html, body, #preview { width: 100% !important; height: auto !important; padding: 0 !important; margin: 0 !important; background: #fff !important; }
+    #sidebar, .modal, .btn-green, .btn-red { display: none !important; }
+    #preview { display: block !important; overflow: visible !important; }
+
+    .grid-container { display: grid !important; grid-template-columns: repeat(2, minmax(0, 1fr)) !important; gap: 5px 30px !important; page-break-inside: auto !important; break-inside: auto !important; }
+
+    .paper { width: 210mm !important; height: 297mm !important; padding-top: 15mm !important; padding-bottom: 15mm !important; margin: 0 !important; overflow: hidden !important; border: none !important; box-shadow: none !important; transform: none !important; page-break-inside: avoid; page-break-after: always; }
+
+    #on-page-ordbank { padding: 5px !important; margin-bottom: 5mm !important; font-size: 20px !important; }
+    .paper-header { margin-bottom: 5px !important; }
+    .paper + .paper, .fasit-page, #fasit-content { margin-top: 0 !important; page-break-before: always !important; }
+
+    .word-unit { margin-top: 3mm !important; page-break-inside: avoid !important; break-inside: avoid !important; }
+
+    #fasit-output { grid-template-columns: repeat(2, minmax(0, 1fr)) !important; column-gap: 30px !important; row-gap: 25px !important; }
+
+    .hidden { display: none !important; }
+}
+
+
+/* =========================================================
+   11. FASIT – TO KOLONNER
+   ========================================================= */
+
+#fasit-output {
+    display: grid;
+    grid-template-columns: repeat(2, minmax(0, 1fr));
+    column-gap: 30px;
+    row-gap: 35px;
+    align-content: start;
+    width: 100%;
+    min-width: 0;
+    padding: 0;
+    margin: 0;
+    box-sizing: border-box;
+}
+
+#fasit-output .word-unit {
+    display: flex;
+    flex-direction: column;
+    align-items: flex-start;
+    justify-content: flex-start;
+    width: 100%;
+    min-width: 0;
+    margin-bottom: 0;
+    overflow: visible;
+    break-inside: avoid;
+    page-break-inside: avoid;
+}
+
+#fasit-output .shapes-wrapper {
+    display: flex;
+    flex: 0 0 auto;
+    align-items: flex-end;
+    justify-content: flex-start;
+    width: max-content;
+    max-width: none;
+}
