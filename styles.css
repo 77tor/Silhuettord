@@ -4,7 +4,7 @@
    ========================================================= */
 
 /* 1. SKRIFT OG VARIABLER */
-@font-face { font-family: 'Trykkskrift-1'; src: url('Trykkskrift-1.otf') format('opentype'), url('Trykkskrift-1.ttf') format('truetype'); font-weight: normal; font-style: normal; }
+@font-face { font-family: 'trykkskrift'; src: url('skrift/trykkskrift.otf') format('opentype'); font-weight: normal; font-style: normal; }
 :root { --unit-size: 42px; --stue-height: 42px; --total-height: 70px; --diff: calc(var(--total-height) - var(--stue-height)); --primary: #243447; --accent: #3498db; }
 
 /* 2. GRUNNLEGGENDE LAYOUT */
@@ -34,8 +34,8 @@ body { display: flex; margin: 0; color: #333; background: #e0e4e8; font-family: 
 .info-box { min-width: 200px; padding: 12px; margin-top: 15px; margin-right: 0; font-size: 14px; border: 2px solid #333; border-radius: 4px; align-self: flex-start; }
 
 /* 5. ORDBANK */
-#on-page-ordbank { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 12px; margin-bottom: 30px; font-family: 'Trykkskrift-1'; font-size: 24px; border: 2px solid #333; border-radius: 8px; }
-#ordbank-sheet-output { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; font-family: 'Trykkskrift-1'; font-size: 30px; border: 2px solid #eee; }
+#on-page-ordbank { display: flex; flex-wrap: wrap; justify-content: center; gap: 15px; padding: 12px; margin-bottom: 30px; font-family: 'trykkskrift'; font-size: 24px; border: 2px solid #333; border-radius: 8px; }
+#ordbank-sheet-output { display: flex; flex-wrap: wrap; gap: 20px; padding: 20px; font-family: 'trykkskrift'; font-size: 30px; border: 2px solid #eee; }
 
 /* 6. OPPGAVER OG SILHUETTER */
 .grid-container { display: grid; grid-template-columns: repeat(2, minmax(0, 1fr)); align-content: start; gap: 25px 30px; width: 100%; min-width: 0; }
@@ -43,7 +43,7 @@ body { display: flex; margin: 0; color: #333; background: #e0e4e8; font-family: 
 .image-box { display: flex; align-items: center; justify-content: center; width: 100%; height: 75px; max-width: 100%; margin-bottom: 10px; }
 .image-box img { width: 75px; height: 75px; object-fit: contain; }
 .shapes-wrapper { display: flex; flex: 0 0 auto; align-items: flex-end; justify-content: flex-start; width: max-content; max-width: none; transform: scaleX(var(--word-scale, 1)); transform-origin: left top; }
-.box { position: relative; display: flex; justify-content: center; flex: 0 0 auto; width: var(--unit-size); margin-left: -2.5px; font-family: 'Trykkskrift-1'; font-size: 32px; background: #fff; border: 2.5px solid #000; box-sizing: border-box; }
+.box { position: relative; display: flex; justify-content: center; flex: 0 0 auto; width: var(--unit-size); margin-left: -2.5px; font-family: 'trykkskrift'; font-size: 32px; background: #fff; border: 2.5px solid #000; box-sizing: border-box; }
 .stue { height: var(--stue-height); align-items: flex-end; }
 .stue-loft { height: var(--total-height); align-items: flex-end; }
 .stue-kjeller { display: flex; flex-direction: column; align-items: center; justify-content: flex-start; height: var(--total-height); margin-bottom: calc(var(--diff) * -1); }
