@@ -5,11 +5,11 @@
 
 /* 1. SKRIFT OG VARIABLER */
 @font-face { font-family: 'trykkskrift'; src: url('skrift/trykkskrift.otf') format('opentype'); font-weight: normal; font-style: normal; }
-:root { --unit-size: 42px; --stue-height: 42px; --total-height: 70px; --diff: calc(var(--total-height) - var(--stue-height)); --primary: #243447; --accent: #3498db; }
+:root { --unit-size: 42px; --stue-height: 42px; --total-height: 70px; --diff: calc(var(--total-height) - var(--stue-height)); --primary: #243447; --accent: #3498db; --main-bg: #d1d8e0; }
 
 /* 2. GRUNNLEGGENDE LAYOUT */
 * { box-sizing: border-box; }
-body { display: flex; margin: 0; color: #333; background: #e0e4e8; font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
+body { display: flex; margin: 0; color: #333; background: var(--main-bg); font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif; }
 .hidden { display: none !important; }
 
 /* 3. VENSTREMENY */
@@ -26,7 +26,7 @@ body { display: flex; margin: 0; color: #333; background: #e0e4e8; font-family: 
 .switch input:checked + .slider:before { transform: translateX(20px); }
 
 /* 4. FORHÅNDSVISNING OG A4-ARK */
-#preview { display: flex; flex-direction: column; align-items: center; width: calc(100% - 350px); min-height: 100vh; margin-left: 350px; padding: 20px 0; overflow-x: hidden; background: #e0e4e8; }
+#preview { display: flex; flex-direction: column; align-items: center; width: calc(100% - 350px); min-height: 100vh; margin-left: 350px; padding: 20px 0; overflow-x: hidden; background: var(--main-bg); }
 .paper { position: relative; display: block; width: 210mm; height: 297mm; padding: 15mm; margin: 10px auto -70mm; overflow: hidden; background: #fff; box-shadow: 0 4px 15px rgba(0,0,0,.15); transform: scale(.75); transform-origin: top center; }
 .paper-header { display: flex; align-items: flex-start; justify-content: space-between; margin-top: 0 !important; margin-bottom: 15px; padding-top: 0 !important; border-bottom: 3px solid #333; }
 .paper-header h1 { display: block; margin: 0 !important; padding: 0 !important; font-size: 28px; line-height: 1; }
