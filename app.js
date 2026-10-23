@@ -295,6 +295,7 @@ function renderAll() {
     tilpassSilhuettLayout(fas);
 }
 
+
 function tilpassSilhuettLayout(container) {
     if (!container) return;
 
@@ -317,11 +318,13 @@ function tilpassSilhuettLayout(container) {
 
         if (!bokser.length) return;
 
-        // Nullstill tidligere tilpasning før vi måler.
+        // Nullstill tidligere tilpasning før vi måler
         enhet.style.gridColumn = 'span 1';
+        enhet.classList.remove('full-width');
         silhuett.style.setProperty('--word-scale', '1');
+        silhuett.style.transformOrigin = 'center top';
 
-        // Mål samlet bredde på bokstavboksene.
+        // Mål samlet bredde på bokstavboksene
         let ordBredde = 0;
 
         bokser.forEach(boks => {
@@ -331,14 +334,15 @@ function tilpassSilhuettLayout(container) {
             ordBredde += parseFloat(boksStil.marginLeft) || 0;
         });
 
-        // Lange ord får hele raden.
-const ekstraLuft = 35;
+        // Lange ord får hele raden
+        const ekstraLuft = 35;
 
-if (ordBredde > kolonneBredde - ekstraLuft) {
-    enhet.style.gridColumn = '1 / -1';
-}
+        if (ordBredde > kolonneBredde - ekstraLuft) {
+            enhet.style.gridColumn = '1 / -1';
+            enhet.classList.add('full-width'); // Utvider skrivelinjene
+        }
 
-        // Skaler bare dersom ordet er bredere enn hele raden.
+        // Skaler bare dersom ordet er bredere enn hele raden
         const maksBredde = tilgjengeligBredde - sikkerhetsmargin;
 
         if (ordBredde > maksBredde) {
@@ -351,6 +355,7 @@ if (ordBredde > kolonneBredde - ekstraLuft) {
         }
     });
 }
+
 
 function oppdaterSideEstimat() {
     const totaltValgte = (typeof selectedAdvancedWords !== 'undefined') ? selectedAdvancedWords.length : 0;
